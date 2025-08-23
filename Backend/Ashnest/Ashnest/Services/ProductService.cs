@@ -59,6 +59,7 @@ namespace Ashnest.Services
             return MapToDto(product);
         }
 
+        // In Ashnest/Services/ProductService.cs
         public async Task<ProductDto> CreateProductAsync(CreateProductRequest request)
         {
             // Validate category
@@ -81,19 +82,19 @@ namespace Ashnest.Services
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
 
-            // Add product images
+            // Add product images - FIXED: Make this optional
             if (request.ImageFiles != null && request.ImageFiles.Any())
             {
                 foreach (var imageFile in request.ImageFiles)
                 {
+                    // Skip invalid images but don't throw an exception
                     if (!_imageService.IsValidImage(imageFile))
                     {
-                        continue; // Skip invalid images
+                        continue;
                     }
 
                     var imageData = await _imageService.ConvertImageToByteArrayAsync(imageFile);
                     var mimeType = _imageService.GetImageMimeType(imageFile.FileName);
-
                     var productImage = new ProductImage
                     {
                         ProductId = product.Id,
@@ -101,10 +102,8 @@ namespace Ashnest.Services
                         MimeType = mimeType,
                         IsPrimary = false // First image will be primary if none set
                     };
-
                     _context.ProductImages.Add(productImage);
                 }
-
                 await _context.SaveChangesAsync();
 
                 // Set first image as primary if no primary images
@@ -112,7 +111,6 @@ namespace Ashnest.Services
                 {
                     var firstImage = _context.ProductImages
                         .First(pi => pi.ProductId == product.Id);
-
                     firstImage.IsPrimary = true;
                     _context.ProductImages.Update(firstImage);
                     await _context.SaveChangesAsync();
@@ -122,10 +120,12 @@ namespace Ashnest.Services
             return await GetProductByIdAsync(product.Id);
         }
 
+
+        // In Ashnest/Services/ProductService.cs
+        // In Ashnest/Services/ProductService.cs
         public async Task<ProductDto> UpdateProductAsync(int id, UpdateProductRequest request)
         {
             var product = await _context.Products.FindAsync(id);
-
             if (product == null)
             {
                 throw new Exception("Product not found");
@@ -133,16 +133,12 @@ namespace Ashnest.Services
 
             if (!string.IsNullOrEmpty(request.Name))
                 product.Name = request.Name;
-
             if (!string.IsNullOrEmpty(request.Description))
                 product.Description = request.Description;
-
             if (request.Price.HasValue)
                 product.Price = request.Price.Value;
-
             if (request.StockQuantity.HasValue)
                 product.StockQuantity = request.StockQuantity.Value;
-
             if (request.CategoryId.HasValue)
             {
                 var category = await _context.Categories.FindAsync(request.CategoryId.Value);
@@ -152,44 +148,76 @@ namespace Ashnest.Services
                 }
                 product.CategoryId = request.CategoryId.Value;
             }
-
             if (!string.IsNullOrEmpty(request.Status) && Enum.TryParse<ProductStatus>(request.Status, true, out var statusEnum))
                 product.Status = statusEnum;
-
             product.UpdatedAt = DateTime.UtcNow;
-
             _context.Products.Update(product);
-            await _context.SaveChangesAsync();
 
-            // Add new images if provided
-            if (request.ImageFiles != null && request.ImageFiles.Any())
+            // Process image updates
+            if (request.ImageUpdates != null && request.ImageUpdates.Any())
             {
-                foreach (var imageFile in request.ImageFiles)
+                foreach (var update in request.ImageUpdates)
                 {
-                    if (!_imageService.IsValidImage(imageFile))
+                    var image = await _context.ProductImages.FindAsync(update.Id);
+                    if (image != null && image.ProductId == id)
                     {
-                        continue; // Skip invalid images
+                        if (update.Remove)
+                        {
+                            _context.ProductImages.Remove(image);
+                        }
+                        else
+                        {
+                            // Update primary status
+                            image.IsPrimary = update.IsPrimary;
+                            _context.ProductImages.Update(image);
+                        }
                     }
+                }
+            }
+
+            // Add new images - only if provided
+            // Add new images - only if provided and valid
+            if (request.NewImageFiles != null && request.NewImageFiles.Any(file => file != null && file.Length > 0))
+            {
+                foreach (var imageFile in request.NewImageFiles)
+                {
+                    // Skip empty or invalid files
+                    if (imageFile == null || imageFile.Length == 0 || !_imageService.IsValidImage(imageFile))
+                    {
+                        continue;
+                    }
+
 
                     var imageData = await _imageService.ConvertImageToByteArrayAsync(imageFile);
                     var mimeType = _imageService.GetImageMimeType(imageFile.FileName);
-
                     var productImage = new ProductImage
                     {
-                        ProductId = product.Id,
+                        ProductId = id,
                         ImageData = imageData,
                         MimeType = mimeType,
-                        IsPrimary = false
+                        IsPrimary = false // Default to not primary
                     };
-
                     _context.ProductImages.Add(productImage);
                 }
-
-                await _context.SaveChangesAsync();
             }
 
-            return await GetProductByIdAsync(product.Id);
+            // Ensure there's always a primary image
+            var productImages = await _context.ProductImages
+                .Where(pi => pi.ProductId == id)
+                .ToListAsync();
+            if (productImages.Any() && !productImages.Any(pi => pi.IsPrimary))
+            {
+                productImages.First().IsPrimary = true;
+                _context.ProductImages.Update(productImages.First());
+            }
+
+            await _context.SaveChangesAsync();
+            return await GetProductByIdAsync(id);
         }
+
+
+
+
 
         public async Task<bool> DeleteProductAsync(int id)
         {

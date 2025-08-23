@@ -139,3 +139,4 @@ D:\Naira\Ashnest\Backend\Ashnest\Ashnest\obj\Debug\net8.0\refint\Ashnest.dll
 D:\Naira\Ashnest\Backend\Ashnest\Ashnest\obj\Debug\net8.0\Ashnest.pdb
 D:\Naira\Ashnest\Backend\Ashnest\Ashnest\obj\Debug\net8.0\Ashnest.genruntimeconfig.cache
 D:\Naira\Ashnest\Backend\Ashnest\Ashnest\obj\Debug\net8.0\ref\Ashnest.dll
+D:\Naira\Ashnest\Backend\Ashnest\Ashnest\obj\Debug\net8.0\Ashnest.sourcelink.json

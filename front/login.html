@@ -771,7 +771,7 @@
     
     <!-- Page Specific JavaScript -->
     <script>
-     document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
     
     loginForm.addEventListener('submit', async (e) => {
@@ -797,23 +797,29 @@
                 role: response.role
             }));
             
+            // Also save role separately for easier access
+            localStorage.setItem('userRole', response.role);
+            
             showNotification('تم تسجيل الدخول بنجاح');
             
-            // Check user role and redirect accordingly
-            // Normalize role to lowercase for case-insensitive comparison
-            const userRole = response.role ? response.role.toLowerCase() : '';
+            // Check for redirect parameter in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirectUrl = urlParams.get('redirect');
             
-            if (userRole === 'admin') {
-                // Redirect admin to dashboard
-                setTimeout(() => {
+            // Redirect to appropriate page
+            setTimeout(() => {
+                // Check user role and redirect accordingly
+                const userRole = response.role ? response.role.toLowerCase() : '';
+                
+                if (userRole === 'admin') {
+                    // Redirect to admin dashboard
                     window.location.href = 'dashboard.html';
-                }, 1000);
-            } else {
-                // Redirect regular user to home page
-                setTimeout(() => {
+                } else if (redirectUrl && !redirectUrl.includes('login.html')) {
+                    window.location.href = redirectUrl;
+                } else {
                     window.location.href = 'index.html';
-                }, 1000);
-            }
+                }
+            }, 1000);
         } catch (error) {
             showNotification(error.message, 'danger');
         }

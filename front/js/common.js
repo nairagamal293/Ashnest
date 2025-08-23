@@ -46,14 +46,14 @@ function logout() {
 }
 
 // API Request function
+// Replace the apiRequest function in common.js with this improved version
 async function apiRequest(endpoint, options = {}) {
     const url = `${API_BASE_URL}${endpoint}`;
     const token = localStorage.getItem('token');
     
     const defaultOptions = {
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': token ? `Bearer ${token}` : '' // Always include Authorization header
+            'Content-Type': 'application/json'
         }
     };
     
@@ -76,7 +76,11 @@ async function apiRequest(endpoint, options = {}) {
         if (response.status === 401) {
             localStorage.removeItem('token');
             localStorage.removeItem('user');
-            window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.pathname);
+            
+            // Only redirect if not already on login page to prevent infinite loop
+            if (!window.location.pathname.includes('login.html')) {
+                window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.pathname);
+            }
             throw new Error('Session expired. Please login again.');
         }
         
@@ -113,7 +117,6 @@ async function apiRequest(endpoint, options = {}) {
         throw error;
     }
 }
-
 // Load categories for navigation
 async function loadCategories() {
     try {

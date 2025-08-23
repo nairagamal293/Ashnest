@@ -109,34 +109,55 @@ namespace Ashnest.Services
             return await GetOrderByIdAsync(userId, order.Id);
         }
 
+        // Update the GetUserOrdersAsync method in OrderService.cs
         public async Task<List<OrderDto>> GetUserOrdersAsync(int userId)
         {
-            var orders = await _context.Orders
-                .Include(o => o.Address)
-                .Include(o => o.OrderItems)
-                .ThenInclude(oi => oi.Product)
-                .Where(o => o.UserId == userId)
-                .OrderByDescending(o => o.OrderDate)
-                .ToListAsync();
+            try
+            {
+                var orders = await _context.Orders
+                    .Include(o => o.User)
+                    .Include(o => o.Address)
+                    .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                    .Where(o => o.UserId == userId)
+                    .OrderByDescending(o => o.OrderDate)
+                    .ToListAsync();
 
-            return orders.Select(o => MapToDto(o)).ToList();
+                return orders.Select(o => MapToDto(o)).ToList();
+            }
+            catch (Exception ex)
+            {
+                // Log the error
+                Console.WriteLine($"Error in GetUserOrdersAsync: {ex.Message}");
+                throw new Exception("Failed to retrieve orders. Please try again later.");
+            }
         }
 
+        // Update the GetOrderByIdAsync method in OrderService.cs
         public async Task<OrderDto> GetOrderByIdAsync(int userId, int orderId)
         {
-            var order = await _context.Orders
-                .Include(o => o.User)
-                .Include(o => o.Address)
-                .Include(o => o.OrderItems)
-                .ThenInclude(oi => oi.Product)
-                .FirstOrDefaultAsync(o => o.Id == orderId && (o.UserId == userId || userId == 0)); // userId=0 for admin
-
-            if (order == null)
+            try
             {
-                throw new Exception("Order not found");
-            }
+                var order = await _context.Orders
+                    .Include(o => o.User)
+                    .Include(o => o.Address)
+                    .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                    .FirstOrDefaultAsync(o => o.Id == orderId && (o.UserId == userId || userId == 0)); // userId=0 for admin
 
-            return MapToDto(order);
+                if (order == null)
+                {
+                    throw new Exception("Order not found");
+                }
+
+                return MapToDto(order);
+            }
+            catch (Exception ex)
+            {
+                // Log the error
+                Console.WriteLine($"Error in GetOrderByIdAsync: {ex.Message}");
+                throw;
+            }
         }
 
         public async Task<List<OrderDto>> GetAllOrdersAsync(string status = null)
@@ -222,47 +243,56 @@ namespace Ashnest.Services
 
         private OrderDto MapToDto(Order order)
         {
-            var orderItems = order.OrderItems.Select(oi => new OrderItemDto
+            try
             {
-                ProductId = oi.ProductId,
-                ProductName = oi.Product.Name,
-                Quantity = oi.Quantity,
-                UnitPrice = oi.UnitPrice,
-                TotalPrice = oi.Quantity * oi.UnitPrice
-            }).ToList();
-
-            var finalAmount = order.OrderTotal - (order.DiscountAmount ?? 0);
-
-            return new OrderDto
-            {
-                Id = order.Id,
-                OrderNumber = order.OrderNumber,
-                UserId = order.UserId,
-                UserName = $"{order.User.FirstName} {order.User.LastName}",
-                ShippingAddress = new AddressDto
+                var orderItems = order.OrderItems?.Select(oi => new OrderItemDto
                 {
-                    Id = order.Address.Id,
-                    FullName = order.Address.FullName,
-                    PhoneNumber = order.Address.PhoneNumber,
-                    Street = order.Address.Street,
-                    City = order.Address.City,
-                    Region = order.Address.Region,
-                    PostalCode = order.Address.PostalCode,
-                    Country = order.Address.Country,
-                    IsDefault = order.Address.IsDefault
-                },
-                OrderItems = orderItems,
-                OrderTotal = order.OrderTotal,
-                Status = order.Status.ToString(),
-                PaymentMethod = order.PaymentMethod.ToString(),
-                ShippingNotes = order.ShippingNotes,
-                OrderDate = order.OrderDate,
-                ShippedDate = order.ShippedDate,
-                DeliveredDate = order.DeliveredDate,
-                CouponCode = order.CouponCode,
-                DiscountAmount = order.DiscountAmount,
-                FinalAmount = finalAmount
-            };
+                    ProductId = oi.ProductId,
+                    ProductName = oi.Product?.Name ?? "Unknown Product",
+                    Quantity = oi.Quantity,
+                    UnitPrice = oi.UnitPrice,
+                    TotalPrice = oi.Quantity * oi.UnitPrice
+                }).ToList() ?? new List<OrderItemDto>();
+
+                var finalAmount = order.OrderTotal - (order.DiscountAmount ?? 0);
+
+                return new OrderDto
+                {
+                    Id = order.Id,
+                    OrderNumber = order.OrderNumber,
+                    UserId = order.UserId,
+                    UserName = order.User != null ? $"{order.User.FirstName} {order.User.LastName}" : "Unknown User",
+                    ShippingAddress = order.Address != null ? new AddressDto
+                    {
+                        Id = order.Address.Id,
+                        FullName = order.Address.FullName,
+                        PhoneNumber = order.Address.PhoneNumber,
+                        Street = order.Address.Street,
+                        City = order.Address.City,
+                        Region = order.Address.Region,
+                        PostalCode = order.Address.PostalCode,
+                        Country = order.Address.Country,
+                        IsDefault = order.Address.IsDefault
+                    } : null,
+                    OrderItems = orderItems,
+                    OrderTotal = order.OrderTotal,
+                    Status = order.Status.ToString(),
+                    PaymentMethod = order.PaymentMethod.ToString(),
+                    ShippingNotes = order.ShippingNotes,
+                    OrderDate = order.OrderDate,
+                    ShippedDate = order.ShippedDate,
+                    DeliveredDate = order.DeliveredDate,
+                    CouponCode = order.CouponCode,
+                    DiscountAmount = order.DiscountAmount,
+                    FinalAmount = finalAmount
+                };
+            }
+            catch (Exception ex)
+            {
+                // Log the error
+                Console.WriteLine($"Error in MapToDto: {ex.Message}");
+                throw new Exception("Failed to process order data.");
+            }
         }
     }
 }

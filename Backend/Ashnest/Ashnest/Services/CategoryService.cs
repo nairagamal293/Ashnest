@@ -1,4 +1,5 @@
-﻿using Ashnest.Data;
+﻿// In Ashnest/Services/CategoryService.cs
+using Ashnest.Data;
 using Ashnest.DTOs;
 using Ashnest.Models;
 using Microsoft.EntityFrameworkCore;
@@ -83,10 +84,11 @@ namespace Ashnest.Services
             return await GetCategoryByIdAsync(category.Id);
         }
 
+        // In Ashnest/Services/CategoryService.cs
+        // In Ashnest/Services/CategoryService.cs
         public async Task<CategoryDto> UpdateCategoryAsync(int id, UpdateCategoryRequest request)
         {
             var category = await _context.Categories.FindAsync(id);
-
             if (category == null)
             {
                 throw new Exception("Category not found");
@@ -99,36 +101,40 @@ namespace Ashnest.Services
                 {
                     throw new Exception("Category cannot be its own parent");
                 }
-
                 var parentCategory = await _context.Categories.FindAsync(request.ParentCategoryId.Value);
                 if (parentCategory == null)
                 {
                     throw new Exception("Parent category not found");
                 }
-
                 category.ParentCategoryId = request.ParentCategoryId;
             }
 
             if (!string.IsNullOrEmpty(request.Name))
                 category.Name = request.Name;
-
             if (!string.IsNullOrEmpty(request.Description))
                 category.Description = request.Description;
 
-            if (request.ImageFile != null)
+            // Handle image updates
+            // Handle image updates
+            if (request.RemoveImage)
             {
+                category.CategoryImage = null;
+                category.ImageMimeType = null;
+            }
+            else if (request.ImageFile != null && request.ImageFile.Length > 0)
+            {
+                // Only validate if we actually have an image file
                 if (!_imageService.IsValidImage(request.ImageFile))
                 {
                     throw new Exception("Invalid image file");
                 }
-
                 category.CategoryImage = await _imageService.ConvertImageToByteArrayAsync(request.ImageFile);
                 category.ImageMimeType = _imageService.GetImageMimeType(request.ImageFile.FileName);
             }
+            // If neither RemoveImage nor ImageFile is provided, keep the current image            // If neither RemoveImage nor ImageFile is provided, keep the current image
 
             _context.Categories.Update(category);
             await _context.SaveChangesAsync();
-
             return await GetCategoryByIdAsync(category.Id);
         }
 
@@ -180,5 +186,4 @@ namespace Ashnest.Services
             };
         }
     }
-
 }

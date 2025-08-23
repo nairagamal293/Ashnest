@@ -313,6 +313,11 @@
         "Name": "ImageFile",
         "Type": "Microsoft.AspNetCore.Http.IFormFile",
         "IsRequired": false
+      },
+      {
+        "Name": "RemoveImage",
+        "Type": "System.Boolean",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -688,7 +693,12 @@
         "IsRequired": false
       },
       {
-        "Name": "ImageFiles",
+        "Name": "ImageUpdates",
+        "Type": "System.Collections.Generic.List\u00601[[Ashnest.DTOs.ProductImageUpdate, Ashnest, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "NewImageFiles",
         "Type": "System.Collections.Generic.List\u00601[[Microsoft.AspNetCore.Http.IFormFile, Microsoft.AspNetCore.Http.Features, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60]]",
         "IsRequired": false
       }

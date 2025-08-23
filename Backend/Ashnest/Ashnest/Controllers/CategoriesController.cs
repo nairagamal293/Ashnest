@@ -1,4 +1,5 @@
-﻿using Ashnest.DTOs;
+﻿// In Ashnest/Controllers/CategoriesController.cs
+using Ashnest.DTOs;
 using Ashnest.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -59,6 +60,7 @@ namespace Ashnest.Controllers
             }
         }
 
+        // In Ashnest/Controllers/CategoriesController.cs
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateCategory(int id, [FromForm] UpdateCategoryRequest request)
@@ -81,12 +83,10 @@ namespace Ashnest.Controllers
             try
             {
                 var result = await _categoryService.DeleteCategoryAsync(id);
-
                 if (!result)
                 {
                     return NotFound(new { message = "Category not found" });
                 }
-
                 return Ok(new { message = "Category deleted successfully" });
             }
             catch (Exception ex)

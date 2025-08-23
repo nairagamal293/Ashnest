@@ -74,6 +74,7 @@ namespace Ashnest.Controllers
             }
         }
 
+        // In Ashnest/Controllers/ProductsController.cs
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateProduct(int id, [FromForm] UpdateProductRequest request)

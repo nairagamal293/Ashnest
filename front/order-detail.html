@@ -1023,47 +1023,51 @@
             }
             
             // Load order details
-            async function loadOrderDetails() {
-                try {
-                    const order = await apiRequest(`/orders/${orderId}`);
-                    renderOrderDetails(order);
-                } catch (error) {
-                    console.error('Error loading order details:', error);
-                    
-                    if (error.message.includes('401')) {
-                        // User not logged in
-                        window.location.href = 'login.html';
-                    } else if (error.message.includes('404')) {
-                        // Order not found
-                        document.querySelector('.order-detail-section').innerHTML = `
-                            <div class="container">
-                                <div class="row justify-content-center">
-                                    <div class="col-md-8 text-center py-5">
-                                        <i class="bi bi-inbox display-1 text-muted"></i>
-                                        <h2 class="mt-3">الطلب غير موجود</h2>
-                                        <p class="text-muted">لم يتم العثور على الطلب المطلوب. قد يكون قد تم حذفه أو غير متاح حالياً.</p>
-                                        <a href="orders.html" class="btn btn-primary">العودة إلى الطلبات</a>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    } else {
-                        // Other error
-                        document.querySelector('.order-detail-section').innerHTML = `
-                            <div class="container">
-                                <div class="row justify-content-center">
-                                    <div class="col-md-8 text-center py-5">
-                                        <i class="bi bi-exclamation-triangle display-1 text-danger"></i>
-                                        <h2 class="mt-3">حدث خطأ</h2>
-                                        <p class="text-muted">لم نتمكن من تحميل تفاصيل الطلب. يرجى المحاولة مرة أخرى لاحقاً.</p>
-                                        <a href="orders.html" class="btn btn-primary">العودة إلى الطلبات</a>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    }
-                }
-            }
+           // Add this error handling to the loadOrderDetails function
+async function loadOrderDetails() {
+    const orderDetailSection = document.querySelector('.order-detail-section');
+    if (!orderDetailSection) {
+        console.error('Order detail section not found');
+        return;
+    }
+    
+    try {
+        const order = await apiRequest(`/orders/${orderId}`);
+        renderOrderDetails(order);
+    } catch (error) {
+        console.error('Error loading order details:', error);
+        
+        if (error.message.includes('401') || error.message.includes('Session expired')) {
+            window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.pathname);
+        } else if (error.message.includes('404')) {
+            orderDetailSection.innerHTML = `
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8 text-center py-5">
+                            <i class="bi bi-inbox display-1 text-muted"></i>
+                            <h2 class="mt-3">الطلب غير موجود</h2>
+                            <p class="text-muted">لم يتم العثور على الطلب المطلوب. قد يكون قد تم حذفه أو غير متاح حالياً.</p>
+                            <a href="orders.html" class="btn btn-primary">العودة إلى الطلبات</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else {
+            orderDetailSection.innerHTML = `
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8 text-center py-5">
+                            <i class="bi bi-exclamation-triangle display-1 text-danger"></i>
+                            <h2 class="mt-3">حدث خطأ</h2>
+                            <p class="text-muted">${error.message || 'لم نتمكن من تحميل تفاصيل الطلب. يرجى المحاولة مرة أخرى لاحقاً.'}</p>
+                            <a href="orders.html" class="btn btn-primary">العودة إلى الطلبات</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    }
+}
             
             // Render order details
             function renderOrderDetails(order) {
