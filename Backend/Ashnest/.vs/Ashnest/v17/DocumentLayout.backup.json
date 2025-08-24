@@ -11,20 +11,20 @@
       "RelativeMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|solutionrelative:ashnest\\dtos\\productdtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|d:\\naira\\ashnest\\backend\\ashnest\\ashnest\\services\\categoryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|solutionrelative:ashnest\\services\\categoryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|d:\\naira\\ashnest\\backend\\ashnest\\ashnest\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|solutionrelative:ashnest\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|d:\\naira\\ashnest\\backend\\ashnest\\ashnest\\dtos\\categorydtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|solutionrelative:ashnest\\dtos\\categorydtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|d:\\naira\\ashnest\\backend\\ashnest\\ashnest\\migrations\\20250824074518_updatediscountrelationships.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|solutionrelative:ashnest\\migrations\\20250824074518_updatediscountrelationships.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|d:\\naira\\ashnest\\backend\\ashnest\\ashnest\\services\\imageservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|solutionrelative:ashnest\\services\\imageservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|d:\\naira\\ashnest\\backend\\ashnest\\ashnest\\controllers\\orderscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|solutionrelative:ashnest\\controllers\\orderscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|d:\\naira\\ashnest\\backend\\ashnest\\ashnest\\controllers\\reviewscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|solutionrelative:ashnest\\controllers\\reviewscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|d:\\naira\\ashnest\\backend\\ashnest\\ashnest\\controllers\\categoriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|solutionrelative:ashnest\\controllers\\categoriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|d:\\naira\\ashnest\\backend\\ashnest\\ashnest\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
@@ -71,8 +71,16 @@
       "RelativeMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|solutionrelative:ashnest\\services\\iorderservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|d:\\naira\\ashnest\\backend\\ashnest\\ashnest\\services\\imageservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|solutionrelative:ashnest\\services\\imageservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|d:\\naira\\ashnest\\backend\\ashnest\\ashnest\\services\\iimageservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|solutionrelative:ashnest\\services\\iimageservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|d:\\naira\\ashnest\\backend\\ashnest\\ashnest\\services\\idiscountservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|solutionrelative:ashnest\\services\\idiscountservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|d:\\naira\\ashnest\\backend\\ashnest\\ashnest\\services\\icouponservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -95,8 +103,16 @@
       "RelativeMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|solutionrelative:ashnest\\services\\iadminservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|d:\\naira\\ashnest\\backend\\ashnest\\ashnest\\services\\discountservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|solutionrelative:ashnest\\services\\discountservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|d:\\naira\\ashnest\\backend\\ashnest\\ashnest\\services\\couponservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|solutionrelative:ashnest\\services\\couponservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|d:\\naira\\ashnest\\backend\\ashnest\\ashnest\\services\\categoryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|solutionrelative:ashnest\\services\\categoryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|d:\\naira\\ashnest\\backend\\ashnest\\ashnest\\services\\cartservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -139,6 +155,10 @@
       "RelativeMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|solutionrelative:ashnest\\models\\order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|d:\\naira\\ashnest\\backend\\ashnest\\ashnest\\models\\discount.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|solutionrelative:ashnest\\models\\discount.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|d:\\naira\\ashnest\\backend\\ashnest\\ashnest\\models\\coupon.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|solutionrelative:ashnest\\models\\coupon.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -175,8 +195,16 @@
       "RelativeMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|solutionrelative:ashnest\\dtos\\orderdtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|d:\\naira\\ashnest\\backend\\ashnest\\ashnest\\dtos\\discountdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|solutionrelative:ashnest\\dtos\\discountdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|d:\\naira\\ashnest\\backend\\ashnest\\ashnest\\dtos\\coupondtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|solutionrelative:ashnest\\dtos\\coupondtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|d:\\naira\\ashnest\\backend\\ashnest\\ashnest\\dtos\\categorydtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|solutionrelative:ashnest\\dtos\\categorydtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|d:\\naira\\ashnest\\backend\\ashnest\\ashnest\\dtos\\cartdtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -203,20 +231,16 @@
       "RelativeMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|solutionrelative:ashnest\\controllers\\userscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|d:\\naira\\ashnest\\backend\\ashnest\\ashnest\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|solutionrelative:ashnest\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|d:\\naira\\ashnest\\backend\\ashnest\\ashnest\\controllers\\reviewscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|solutionrelative:ashnest\\controllers\\reviewscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|d:\\naira\\ashnest\\backend\\ashnest\\ashnest\\controllers\\orderscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|solutionrelative:ashnest\\controllers\\orderscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|d:\\naira\\ashnest\\backend\\ashnest\\ashnest\\controllers\\discountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|solutionrelative:ashnest\\controllers\\discountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|d:\\naira\\ashnest\\backend\\ashnest\\ashnest\\controllers\\couponscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|solutionrelative:ashnest\\controllers\\couponscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|d:\\naira\\ashnest\\backend\\ashnest\\ashnest\\controllers\\categoriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|solutionrelative:ashnest\\controllers\\categoriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{5B3C3F1F-3D30-46DD-8004-CFBE6C32DAE8}|Ashnest\\Ashnest.csproj|d:\\naira\\ashnest\\backend\\ashnest\\ashnest\\controllers\\cartcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -249,20 +273,20 @@
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedHeight": 288,
-          "SelectedChildIndex": 6,
+          "DockedHeight": 357,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "WishlistService.cs",
-              "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\WishlistService.cs",
-              "RelativeDocumentMoniker": "Ashnest\\Services\\WishlistService.cs",
-              "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\WishlistService.cs",
-              "RelativeToolTip": "Ashnest\\Services\\WishlistService.cs",
-              "ViewState": "AgIAAFEAAAAAAAAAAAAmwGoAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "ProductService.cs",
+              "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\ProductService.cs",
+              "RelativeDocumentMoniker": "Ashnest\\Services\\ProductService.cs",
+              "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\ProductService.cs*",
+              "RelativeToolTip": "Ashnest\\Services\\ProductService.cs*",
+              "ViewState": "AgIAAN0AAAAAAAAAAAAYwP8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-19T12:15:07.465Z",
+              "WhenOpened": "2025-08-19T12:05:53.34Z",
               "EditorCaption": ""
             },
             {
@@ -273,7 +297,7 @@
               "RelativeDocumentMoniker": "Ashnest\\Program.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Program.cs",
               "RelativeToolTip": "Ashnest\\Program.cs",
-              "ViewState": "AgIAAIMAAAAAAAAAAAAuwJ4AAAAKAAAAAAAAAA==",
+              "ViewState": "AgIAAIYAAAAAAAAAAAAswJ8AAAAKAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T12:34:24.018Z",
               "EditorCaption": ""
@@ -286,7 +310,7 @@
               "RelativeDocumentMoniker": "Ashnest\\appsettings.json",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\appsettings.json",
               "RelativeToolTip": "Ashnest\\appsettings.json",
-              "ViewState": "AgIAAAIAAAAAAAAAAAAswBAAAAAEAAAAAAAAAA==",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAswB0AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
               "WhenOpened": "2025-08-19T12:34:35.445Z",
               "EditorCaption": ""
@@ -294,53 +318,40 @@
             {
               "$type": "Document",
               "DocumentIndex": 5,
-              "Title": "ReviewsController.cs",
-              "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\ReviewsController.cs",
-              "RelativeDocumentMoniker": "Ashnest\\Controllers\\ReviewsController.cs",
-              "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\ReviewsController.cs",
-              "RelativeToolTip": "Ashnest\\Controllers\\ReviewsController.cs",
-              "ViewState": "AgIAAE0AAAAAAAAAAAAqwFsAAABKAAAAAAAAAA==",
+              "Title": "CategoriesController.cs",
+              "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\CategoriesController.cs",
+              "RelativeDocumentMoniker": "Ashnest\\Controllers\\CategoriesController.cs",
+              "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\CategoriesController.cs",
+              "RelativeToolTip": "Ashnest\\Controllers\\CategoriesController.cs",
+              "ViewState": "AgIAAFEAAAAAAAAAAAAYwGEAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-19T12:31:40.272Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "CategoryService.cs",
-              "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\CategoryService.cs",
-              "RelativeDocumentMoniker": "Ashnest\\Services\\CategoryService.cs",
-              "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\CategoryService.cs",
-              "RelativeToolTip": "Ashnest\\Services\\CategoryService.cs",
-              "ViewState": "AgIAAGsAAAAAAAAAAAAuwHcAAAANAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-19T12:02:44.69Z",
+              "WhenOpened": "2025-08-19T12:20:32.017Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "ImageService.cs",
-              "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\ImageService.cs",
-              "RelativeDocumentMoniker": "Ashnest\\Services\\ImageService.cs",
-              "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\ImageService.cs",
-              "RelativeToolTip": "Ashnest\\Services\\ImageService.cs",
-              "ViewState": "AgIAABAAAAAAAAAAAAAqwBwAAAAdAAAAAAAAAA==",
+              "Title": "OrdersController.cs",
+              "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\OrdersController.cs",
+              "RelativeDocumentMoniker": "Ashnest\\Controllers\\OrdersController.cs",
+              "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\OrdersController.cs",
+              "RelativeToolTip": "Ashnest\\Controllers\\OrdersController.cs",
+              "ViewState": "AgIAAGIAAAAAAAAAAAAQwHEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-19T12:01:52.794Z",
+              "WhenOpened": "2025-08-19T12:23:28.764Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "ProductService.cs",
-              "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\ProductService.cs",
-              "RelativeDocumentMoniker": "Ashnest\\Services\\ProductService.cs",
-              "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\ProductService.cs*",
-              "RelativeToolTip": "Ashnest\\Services\\ProductService.cs*",
-              "ViewState": "AgIAAK8AAAAAAAAAAAAAAL4AAABBAAAAAAAAAA==",
+              "DocumentIndex": 2,
+              "Title": "ProductsController.cs",
+              "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\ProductsController.cs",
+              "RelativeDocumentMoniker": "Ashnest\\Controllers\\ProductsController.cs",
+              "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\ProductsController.cs",
+              "RelativeToolTip": "Ashnest\\Controllers\\ProductsController.cs",
+              "ViewState": "AgIAAEUAAAAAAAAAAAAQwGYAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-19T12:05:53.34Z",
+              "WhenOpened": "2025-08-19T12:22:00.669Z",
               "EditorCaption": ""
             },
             {
@@ -351,9 +362,26 @@
               "RelativeDocumentMoniker": "Ashnest\\DTOs\\ProductDtos.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\DTOs\\ProductDtos.cs*",
               "RelativeToolTip": "Ashnest\\DTOs\\ProductDtos.cs*",
-              "ViewState": "AgIAACwAAAAAAAAAAAAAADkAAAAFAAAAAAAAAA==",
+              "ViewState": "AgIAADAAAAAAAAAAAAAAAEIAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T11:39:45.088Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "WishlistService.cs",
+              "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\WishlistService.cs",
+              "RelativeDocumentMoniker": "Ashnest\\Services\\WishlistService.cs",
+              "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\WishlistService.cs",
+              "RelativeToolTip": "Ashnest\\Services\\WishlistService.cs",
+              "ViewState": "AgIAAHoAAAAAAAAAAAAkwJEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-19T12:15:07.465Z",
               "EditorCaption": ""
             },
             {
@@ -364,26 +392,9 @@
               "RelativeDocumentMoniker": "Ashnest\\Services\\UserService.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\UserService.cs",
               "RelativeToolTip": "Ashnest\\Services\\UserService.cs",
-              "ViewState": "AgIAACkAAAAAAAAAAAAmwEIAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAACsAAAAAAAAAAAAkwEIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T11:47:48.21Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "CategoryDtos.cs",
-              "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\DTOs\\CategoryDtos.cs",
-              "RelativeDocumentMoniker": "Ashnest\\DTOs\\CategoryDtos.cs",
-              "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\DTOs\\CategoryDtos.cs",
-              "RelativeToolTip": "Ashnest\\DTOs\\CategoryDtos.cs",
-              "ViewState": "AgIAABIAAAAAAAAAAAAowCMAAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-19T11:39:19.07Z",
               "EditorCaption": ""
             },
             {
@@ -394,7 +405,7 @@
               "RelativeDocumentMoniker": "Ashnest\\Services\\ReviewService.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\ReviewService.cs",
               "RelativeToolTip": "Ashnest\\Services\\ReviewService.cs",
-              "ViewState": "AgIAAIEAAAAAAAAAAAAqwJsAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAIMAAAAAAAAAAAAowJsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T12:10:03.162Z",
               "EditorCaption": ""
@@ -407,7 +418,7 @@
               "RelativeDocumentMoniker": "Ashnest\\Services\\OrderService.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\OrderService.cs",
               "RelativeToolTip": "Ashnest\\Services\\OrderService.cs",
-              "ViewState": "AgIAAA8BAAAAAAAAAAAuwCoBAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAGABAAAAAAAAAAAswHkBAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T12:08:40.511Z",
               "EditorCaption": ""
@@ -480,6 +491,19 @@
             {
               "$type": "Document",
               "DocumentIndex": 17,
+              "Title": "ImageService.cs",
+              "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\ImageService.cs",
+              "RelativeDocumentMoniker": "Ashnest\\Services\\ImageService.cs",
+              "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\ImageService.cs",
+              "RelativeToolTip": "Ashnest\\Services\\ImageService.cs",
+              "ViewState": "AgIAABIAAAAAAAAAAAAowCoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-19T12:01:52.794Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
               "Title": "IImageService.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\IImageService.cs",
               "RelativeDocumentMoniker": "Ashnest\\Services\\IImageService.cs",
@@ -492,7 +516,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 19,
+              "Title": "IDiscountService.cs",
+              "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\IDiscountService.cs",
+              "RelativeDocumentMoniker": "Ashnest\\Services\\IDiscountService.cs",
+              "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\IDiscountService.cs",
+              "RelativeToolTip": "Ashnest\\Services\\IDiscountService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-24T07:14:47.694Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
               "Title": "ICouponService.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\ICouponService.cs",
               "RelativeDocumentMoniker": "Ashnest\\Services\\ICouponService.cs",
@@ -505,7 +542,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 21,
               "Title": "ICategoryService.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\ICategoryService.cs",
               "RelativeDocumentMoniker": "Ashnest\\Services\\ICategoryService.cs",
@@ -518,7 +555,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 22,
               "Title": "ICartService.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\ICartService.cs",
               "RelativeDocumentMoniker": "Ashnest\\Services\\ICartService.cs",
@@ -531,7 +568,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 23,
               "Title": "IAuthService.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\IAuthService.cs",
               "RelativeDocumentMoniker": "Ashnest\\Services\\IAuthService.cs",
@@ -544,7 +581,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 24,
               "Title": "IAdminService.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\IAdminService.cs",
               "RelativeDocumentMoniker": "Ashnest\\Services\\IAdminService.cs",
@@ -557,189 +594,228 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 25,
+              "Title": "DiscountService.cs",
+              "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\DiscountService.cs",
+              "RelativeDocumentMoniker": "Ashnest\\Services\\DiscountService.cs",
+              "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\DiscountService.cs",
+              "RelativeToolTip": "Ashnest\\Services\\DiscountService.cs",
+              "ViewState": "AgIAAI4AAAAAAAAAAAAowKYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-24T07:17:13.779Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
               "Title": "CouponService.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\CouponService.cs",
               "RelativeDocumentMoniker": "Ashnest\\Services\\CouponService.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\CouponService.cs",
               "RelativeToolTip": "Ashnest\\Services\\CouponService.cs",
-              "ViewState": "AgIAAL4AAAAAAAAAAAAqwNgAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAMAAAAAAAAAAAAAowNgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T12:13:27.485Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 27,
+              "Title": "CategoryService.cs",
+              "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\CategoryService.cs",
+              "RelativeDocumentMoniker": "Ashnest\\Services\\CategoryService.cs",
+              "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\CategoryService.cs",
+              "RelativeToolTip": "Ashnest\\Services\\CategoryService.cs",
+              "ViewState": "AgIAAMAAAAAAAAAAAAAswNkAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-19T12:02:44.69Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
               "Title": "CartService.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\CartService.cs",
               "RelativeDocumentMoniker": "Ashnest\\Services\\CartService.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\CartService.cs",
               "RelativeToolTip": "Ashnest\\Services\\CartService.cs",
-              "ViewState": "AgIAAKAAAAAAAAAAAAAqwLoAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAN8AAAAAAAAAAAAswPgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T12:07:18.023Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 29,
               "Title": "AuthService.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\AuthService.cs",
               "RelativeDocumentMoniker": "Ashnest\\Services\\AuthService.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\AuthService.cs",
               "RelativeToolTip": "Ashnest\\Services\\AuthService.cs",
-              "ViewState": "AgIAAGcAAAAAAAAAAAAqwIEAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAGkAAAAAAAAAAAAowIEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T11:46:25.057Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 30,
               "Title": "AdminService.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\AdminService.cs",
               "RelativeDocumentMoniker": "Ashnest\\Services\\AdminService.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Services\\AdminService.cs",
               "RelativeToolTip": "Ashnest\\Services\\AdminService.cs",
-              "ViewState": "AgIAAHMAAAAAAAAAAAAuwI4AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAHEAAAAAAAAAAAAswIoAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T12:17:17.147Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 31,
               "Title": "Wishlist.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Models\\Wishlist.cs",
               "RelativeDocumentMoniker": "Ashnest\\Models\\Wishlist.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Models\\Wishlist.cs",
               "RelativeToolTip": "Ashnest\\Models\\Wishlist.cs",
-              "ViewState": "AgIAAAEAAAAAAAAAAADwvxUAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAABUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T11:35:53.303Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 32,
               "Title": "User.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Models\\User.cs",
               "RelativeDocumentMoniker": "Ashnest\\Models\\User.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Models\\User.cs",
               "RelativeToolTip": "Ashnest\\Models\\User.cs",
-              "ViewState": "AgIAAB0AAAAAAAAAAAAswDAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAuwDAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T11:28:42.178Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 33,
               "Title": "Review.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Models\\Review.cs",
               "RelativeDocumentMoniker": "Ashnest\\Models\\Review.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Models\\Review.cs",
               "RelativeToolTip": "Ashnest\\Models\\Review.cs",
-              "ViewState": "AgIAAAgAAAAAAAAAAAAwwBwAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAAABwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T11:34:44.581Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 34,
               "Title": "ProductImage.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Models\\ProductImage.cs",
               "RelativeDocumentMoniker": "Ashnest\\Models\\ProductImage.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Models\\ProductImage.cs",
               "RelativeToolTip": "Ashnest\\Models\\ProductImage.cs",
-              "ViewState": "AgIAAAMAAAAAAAAAAADwvxcAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAxwBcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T11:32:18.587Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 35,
               "Title": "Product.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Models\\Product.cs",
               "RelativeDocumentMoniker": "Ashnest\\Models\\Product.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Models\\Product.cs",
               "RelativeToolTip": "Ashnest\\Models\\Product.cs",
-              "ViewState": "AgIAABoAAAAAAAAAAAAswC0AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAABYAAAAAAAAAAAAuwCgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T11:31:51.552Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 36,
               "Title": "OrderItem.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Models\\OrderItem.cs",
               "RelativeDocumentMoniker": "Ashnest\\Models\\OrderItem.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Models\\OrderItem.cs",
               "RelativeToolTip": "Ashnest\\Models\\OrderItem.cs",
-              "ViewState": "AgIAAAcAAAAAAAAAAADwvxsAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAuwBgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T11:34:17.118Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 37,
               "Title": "Order.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Models\\Order.cs",
               "RelativeDocumentMoniker": "Ashnest\\Models\\Order.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Models\\Order.cs",
               "RelativeToolTip": "Ashnest\\Models\\Order.cs",
-              "ViewState": "AgIAACoAAAAAAAAAAAAUwEAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAACEAAAAAAAAAAAA1wDYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T11:33:45.858Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 38,
+              "Title": "Discount.cs",
+              "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Models\\Discount.cs",
+              "RelativeDocumentMoniker": "Ashnest\\Models\\Discount.cs",
+              "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Models\\Discount.cs",
+              "RelativeToolTip": "Ashnest\\Models\\Discount.cs",
+              "ViewState": "AgIAABYAAAAAAAAAAAAAACgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-24T07:08:28.319Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 39,
               "Title": "Coupon.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Models\\Coupon.cs",
               "RelativeDocumentMoniker": "Ashnest\\Models\\Coupon.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Models\\Coupon.cs",
               "RelativeToolTip": "Ashnest\\Models\\Coupon.cs",
-              "ViewState": "AgIAAAoAAAAAAAAAAAAwwB4AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAAB4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T11:35:29.841Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 35,
+              "DocumentIndex": 40,
               "Title": "Category.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Models\\Category.cs",
               "RelativeDocumentMoniker": "Ashnest\\Models\\Category.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Models\\Category.cs",
               "RelativeToolTip": "Ashnest\\Models\\Category.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAA/wBoAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAmwBYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T11:31:18.009Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 36,
+              "DocumentIndex": 41,
               "Title": "CartItem.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Models\\CartItem.cs",
               "RelativeDocumentMoniker": "Ashnest\\Models\\CartItem.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Models\\CartItem.cs",
               "RelativeToolTip": "Ashnest\\Models\\CartItem.cs",
-              "ViewState": "AgIAAAQAAAAAAAAAAAAwwBgAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAABgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T11:33:05.46Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 37,
+              "DocumentIndex": 42,
               "Title": "Cart.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Models\\Cart.cs",
               "RelativeDocumentMoniker": "Ashnest\\Models\\Cart.cs",
@@ -752,267 +828,280 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 38,
+              "DocumentIndex": 43,
               "Title": "Address.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Models\\Address.cs",
               "RelativeDocumentMoniker": "Ashnest\\Models\\Address.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Models\\Address.cs",
               "RelativeToolTip": "Ashnest\\Models\\Address.cs",
-              "ViewState": "AgIAABkAAAAAAAAAAAAywC4AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAABsAAAAAAAAAAAAAwC4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T11:30:18.232Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 39,
+              "DocumentIndex": 44,
               "Title": "WishlistDtos.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\DTOs\\WishlistDtos.cs",
               "RelativeDocumentMoniker": "Ashnest\\DTOs\\WishlistDtos.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\DTOs\\WishlistDtos.cs",
               "RelativeToolTip": "Ashnest\\DTOs\\WishlistDtos.cs",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAkwBQAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAcAAAAAAAAAAAA6wBcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T11:43:37.672Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 40,
+              "DocumentIndex": 45,
               "Title": "UserDtos.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\DTOs\\UserDtos.cs",
               "RelativeDocumentMoniker": "Ashnest\\DTOs\\UserDtos.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\DTOs\\UserDtos.cs",
               "RelativeToolTip": "Ashnest\\DTOs\\UserDtos.cs",
-              "ViewState": "AgIAACkAAAAAAAAAAAAwwD0AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAACsAAAAAAAAAAAAAAD0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T11:37:37.799Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 41,
+              "DocumentIndex": 46,
               "Title": "ReviewDtos.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\DTOs\\ReviewDtos.cs",
               "RelativeDocumentMoniker": "Ashnest\\DTOs\\ReviewDtos.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\DTOs\\ReviewDtos.cs",
               "RelativeToolTip": "Ashnest\\DTOs\\ReviewDtos.cs",
-              "ViewState": "AgIAAA4AAAAAAAAAAADwvyIAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAAwCIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T11:42:15.866Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 42,
+              "DocumentIndex": 47,
               "Title": "OrderDtos.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\DTOs\\OrderDtos.cs",
               "RelativeDocumentMoniker": "Ashnest\\DTOs\\OrderDtos.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\DTOs\\OrderDtos.cs",
               "RelativeToolTip": "Ashnest\\DTOs\\OrderDtos.cs",
-              "ViewState": "AgIAAB8AAAAAAAAAAADwvzMAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAACcAAAAAAAAAAAAAADkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T11:41:04.5Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 43,
+              "DocumentIndex": 48,
+              "Title": "DiscountDto.cs",
+              "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\DTOs\\DiscountDto.cs",
+              "RelativeDocumentMoniker": "Ashnest\\DTOs\\DiscountDto.cs",
+              "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\DTOs\\DiscountDto.cs",
+              "RelativeToolTip": "Ashnest\\DTOs\\DiscountDto.cs",
+              "ViewState": "AgIAACIAAAAAAAAAAAA8wDMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-24T07:13:12.988Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 49,
               "Title": "CouponDtos.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\DTOs\\CouponDtos.cs",
               "RelativeDocumentMoniker": "Ashnest\\DTOs\\CouponDtos.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\DTOs\\CouponDtos.cs",
               "RelativeToolTip": "Ashnest\\DTOs\\CouponDtos.cs",
-              "ViewState": "AgIAACEAAAAAAAAAAAAuwDwAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAACoAAAAAAAAAAAAuwDwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T11:42:58.566Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 44,
+              "DocumentIndex": 50,
+              "Title": "CategoryDtos.cs",
+              "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\DTOs\\CategoryDtos.cs",
+              "RelativeDocumentMoniker": "Ashnest\\DTOs\\CategoryDtos.cs",
+              "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\DTOs\\CategoryDtos.cs",
+              "RelativeToolTip": "Ashnest\\DTOs\\CategoryDtos.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAAA8wCYAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-19T11:39:19.07Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 51,
               "Title": "CartDtos.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\DTOs\\CartDtos.cs",
               "RelativeDocumentMoniker": "Ashnest\\DTOs\\CartDtos.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\DTOs\\CartDtos.cs",
               "RelativeToolTip": "Ashnest\\DTOs\\CartDtos.cs",
-              "ViewState": "AgIAABUAAAAAAAAAAAAywCoAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAABgAAAAAAAAAAAAzwCwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T11:40:37.303Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 45,
+              "DocumentIndex": 52,
               "Title": "AdminDtos.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\DTOs\\AdminDtos.cs",
               "RelativeDocumentMoniker": "Ashnest\\DTOs\\AdminDtos.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\DTOs\\AdminDtos.cs",
               "RelativeToolTip": "Ashnest\\DTOs\\AdminDtos.cs",
-              "ViewState": "AgIAACoAAAAAAAAAAAAowDwAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAACwAAAAAAAAAAAAmwDwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T11:44:15.112Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 46,
+              "DocumentIndex": 53,
               "Title": "AddressDto.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\DTOs\\AddressDto.cs",
               "RelativeDocumentMoniker": "Ashnest\\DTOs\\AddressDto.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\DTOs\\AddressDto.cs",
               "RelativeToolTip": "Ashnest\\DTOs\\AddressDto.cs",
-              "ViewState": "AgIAACYAAAAAAAAAAAAkwDcAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAACcAAAAAAAAAAAAmwDcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T11:38:11.532Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 47,
+              "DocumentIndex": 54,
               "Title": "ApplicationDbContext.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Data\\ApplicationDbContext.cs",
               "RelativeDocumentMoniker": "Ashnest\\Data\\ApplicationDbContext.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Data\\ApplicationDbContext.cs",
               "RelativeToolTip": "Ashnest\\Data\\ApplicationDbContext.cs",
-              "ViewState": "AgIAAHMAAAAAAAAAAAAuwI4AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAH8AAAAAAAAAAAAswJgAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T11:36:36.979Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 48,
+              "DocumentIndex": 55,
               "Title": "WishlistController.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\WishlistController.cs",
               "RelativeDocumentMoniker": "Ashnest\\Controllers\\WishlistController.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\WishlistController.cs",
               "RelativeToolTip": "Ashnest\\Controllers\\WishlistController.cs",
-              "ViewState": "AgIAAC4AAAAAAAAAAAAqwEgAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAADAAAAAAAAAAAAAowEgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T12:33:09.248Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 49,
+              "DocumentIndex": 56,
               "Title": "UsersController.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\UsersController.cs",
               "RelativeDocumentMoniker": "Ashnest\\Controllers\\UsersController.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\UsersController.cs",
               "RelativeToolTip": "Ashnest\\Controllers\\UsersController.cs",
-              "ViewState": "AgIAAEkAAAAAAAAAAAAqwGMAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAEsAAAAAAAAAAAAowGMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T12:18:46.771Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 50,
-              "Title": "ProductsController.cs",
-              "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\ProductsController.cs",
-              "RelativeDocumentMoniker": "Ashnest\\Controllers\\ProductsController.cs",
-              "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\ProductsController.cs",
-              "RelativeToolTip": "Ashnest\\Controllers\\ProductsController.cs",
-              "ViewState": "AgIAAFgAAAAAAAAAAAAqwHIAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 57,
+              "Title": "ReviewsController.cs",
+              "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\ReviewsController.cs",
+              "RelativeDocumentMoniker": "Ashnest\\Controllers\\ReviewsController.cs",
+              "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\ReviewsController.cs",
+              "RelativeToolTip": "Ashnest\\Controllers\\ReviewsController.cs",
+              "ViewState": "AgIAAE8AAAAAAAAAAAAowGcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-19T12:22:00.669Z",
+              "WhenOpened": "2025-08-19T12:31:40.272Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 51,
-              "Title": "OrdersController.cs",
-              "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\OrdersController.cs",
-              "RelativeDocumentMoniker": "Ashnest\\Controllers\\OrdersController.cs",
-              "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\OrdersController.cs",
-              "RelativeToolTip": "Ashnest\\Controllers\\OrdersController.cs",
-              "ViewState": "AgIAAFgAAAAAAAAAAAAmwHEAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 58,
+              "Title": "DiscountController.cs",
+              "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\DiscountController.cs",
+              "RelativeDocumentMoniker": "Ashnest\\Controllers\\DiscountController.cs",
+              "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\DiscountController.cs",
+              "RelativeToolTip": "Ashnest\\Controllers\\DiscountController.cs",
+              "ViewState": "AgIAAFAAAAAAAAAAAAAowGgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-19T12:23:28.764Z",
+              "WhenOpened": "2025-08-24T07:18:38.579Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 52,
+              "DocumentIndex": 59,
               "Title": "CouponsController.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\CouponsController.cs",
               "RelativeDocumentMoniker": "Ashnest\\Controllers\\CouponsController.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\CouponsController.cs",
               "RelativeToolTip": "Ashnest\\Controllers\\CouponsController.cs",
-              "ViewState": "AgIAAF0AAAAAAAAAAAAqwHcAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAF8AAAAAAAAAAAAowHcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T12:32:23.628Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 53,
-              "Title": "CategoriesController.cs",
-              "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\CategoriesController.cs",
-              "RelativeDocumentMoniker": "Ashnest\\Controllers\\CategoriesController.cs",
-              "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\CategoriesController.cs",
-              "RelativeToolTip": "Ashnest\\Controllers\\CategoriesController.cs",
-              "ViewState": "AgIAAEcAAAAAAAAAAAAqwGEAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-19T12:20:32.017Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 54,
+              "DocumentIndex": 60,
               "Title": "CartController.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\CartController.cs",
               "RelativeDocumentMoniker": "Ashnest\\Controllers\\CartController.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\CartController.cs",
               "RelativeToolTip": "Ashnest\\Controllers\\CartController.cs",
-              "ViewState": "AgIAAEsAAAAAAAAAAAAqwGUAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAE0AAAAAAAAAAAAowGUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T12:22:42.761Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 55,
+              "DocumentIndex": 61,
               "Title": "AuthController.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "Ashnest\\Controllers\\AuthController.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\AuthController.cs",
               "RelativeToolTip": "Ashnest\\Controllers\\AuthController.cs",
-              "ViewState": "AgIAABQAAAAAAAAAAAAqwC4AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAABYAAAAAAAAAAAAowC4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T12:18:12.671Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 56,
+              "DocumentIndex": 62,
               "Title": "AdminController.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\AdminController.cs",
               "RelativeDocumentMoniker": "Ashnest\\Controllers\\AdminController.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\AdminController.cs",
               "RelativeToolTip": "Ashnest\\Controllers\\AdminController.cs",
-              "ViewState": "AgIAABcAAAAAAAAAAAAmwDAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAABkAAAAAAAAAAAAkwDAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T12:33:51.576Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 57,
+              "DocumentIndex": 63,
               "Title": "AddressesController.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\AddressesController.cs",
               "RelativeDocumentMoniker": "Ashnest\\Controllers\\AddressesController.cs",
               "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\AddressesController.cs",
               "RelativeToolTip": "Ashnest\\Controllers\\AddressesController.cs",
-              "ViewState": "AgIAAL8AAAAAAAAAAAA+wNoAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAMEAAAAAAAAAAAAswNoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-19T12:19:26.993Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 58,
+              "DocumentIndex": 64,
               "Title": "WeatherForecastController.cs",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Controllers\\WeatherForecastController.cs",
               "RelativeDocumentMoniker": "Ashnest\\Controllers\\WeatherForecastController.cs",
@@ -1020,12 +1109,11 @@
               "RelativeToolTip": "Ashnest\\Controllers\\WeatherForecastController.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-23T11:14:34.873Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-08-23T11:14:34.873Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 59,
+              "DocumentIndex": 65,
               "Title": "Ashnest.csproj",
               "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Ashnest.csproj",
               "RelativeDocumentMoniker": "Ashnest\\Ashnest.csproj",
@@ -1038,8 +1126,8 @@
           ]
         },
         {
-          "DockedHeight": 112,
-          "SelectedChildIndex": -1,
+          "DockedHeight": 43,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Bookmark",
@@ -1052,6 +1140,19 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "20250824074518_UpdateDiscountRelationships.cs",
+              "DocumentMoniker": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Migrations\\20250824074518_UpdateDiscountRelationships.cs",
+              "RelativeDocumentMoniker": "Ashnest\\Migrations\\20250824074518_UpdateDiscountRelationships.cs",
+              "ToolTip": "D:\\Naira\\Ashnest\\Backend\\Ashnest\\Ashnest\\Migrations\\20250824074518_UpdateDiscountRelationships.cs",
+              "RelativeToolTip": "Ashnest\\Migrations\\20250824074518_UpdateDiscountRelationships.cs",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAqwAIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-24T07:45:18.942Z",
+              "EditorCaption": ""
             }
           ]
         }

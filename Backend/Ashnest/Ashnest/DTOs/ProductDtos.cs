@@ -9,6 +9,8 @@ namespace Ashnest.DTOs
         public string Name { get; set; }
         public string Description { get; set; }
         public decimal Price { get; set; }
+        public decimal? DiscountedPrice { get; set; } // Make sure this exists
+        public DiscountDto Discount { get; set; } // Make sure this exists
         public int StockQuantity { get; set; }
         public int CategoryId { get; set; }
         public string CategoryName { get; set; }
@@ -54,7 +56,7 @@ namespace Ashnest.DTOs
         public int? CategoryId { get; set; }
         public string Status { get; set; }
         public List<ProductImageUpdate> ImageUpdates { get; set; }
-        public List<IFormFile>? NewImageFiles { get; set; }  // جعلها nullable
+        public List<IFormFile> NewImageFiles { get; set; } = new List<IFormFile>(); // Initialize with empty list
     }
 
     public class ProductImageUpdate

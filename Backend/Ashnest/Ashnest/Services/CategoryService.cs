@@ -1,8 +1,8 @@
-﻿// In Ashnest/Services/CategoryService.cs
-using Ashnest.Data;
+﻿using Ashnest.Data;
 using Ashnest.DTOs;
 using Ashnest.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 
 namespace Ashnest.Services
 {
@@ -22,6 +22,7 @@ namespace Ashnest.Services
             var categories = await _context.Categories
                 .Include(c => c.ParentCategory)
                 .Include(c => c.SubCategories)
+                .Include(c => c.Discounts) // Include discounts
                 .Where(c => c.ParentCategoryId == null)
                 .ToListAsync();
 
@@ -33,6 +34,7 @@ namespace Ashnest.Services
             var category = await _context.Categories
                 .Include(c => c.ParentCategory)
                 .Include(c => c.SubCategories)
+                .Include(c => c.Discounts) // Include discounts
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (category == null)
@@ -84,11 +86,12 @@ namespace Ashnest.Services
             return await GetCategoryByIdAsync(category.Id);
         }
 
-        // In Ashnest/Services/CategoryService.cs
-        // In Ashnest/Services/CategoryService.cs
         public async Task<CategoryDto> UpdateCategoryAsync(int id, UpdateCategoryRequest request)
         {
-            var category = await _context.Categories.FindAsync(id);
+            var category = await _context.Categories
+                .Include(c => c.Discounts) // Include discounts for potential updates
+                .FirstOrDefaultAsync(c => c.Id == id);
+
             if (category == null)
             {
                 throw new Exception("Category not found");
@@ -101,20 +104,22 @@ namespace Ashnest.Services
                 {
                     throw new Exception("Category cannot be its own parent");
                 }
+
                 var parentCategory = await _context.Categories.FindAsync(request.ParentCategoryId.Value);
                 if (parentCategory == null)
                 {
                     throw new Exception("Parent category not found");
                 }
+
                 category.ParentCategoryId = request.ParentCategoryId;
             }
 
             if (!string.IsNullOrEmpty(request.Name))
                 category.Name = request.Name;
+
             if (!string.IsNullOrEmpty(request.Description))
                 category.Description = request.Description;
 
-            // Handle image updates
             // Handle image updates
             if (request.RemoveImage)
             {
@@ -123,18 +128,18 @@ namespace Ashnest.Services
             }
             else if (request.ImageFile != null && request.ImageFile.Length > 0)
             {
-                // Only validate if we actually have an image file
                 if (!_imageService.IsValidImage(request.ImageFile))
                 {
                     throw new Exception("Invalid image file");
                 }
+
                 category.CategoryImage = await _imageService.ConvertImageToByteArrayAsync(request.ImageFile);
                 category.ImageMimeType = _imageService.GetImageMimeType(request.ImageFile.FileName);
             }
-            // If neither RemoveImage nor ImageFile is provided, keep the current image            // If neither RemoveImage nor ImageFile is provided, keep the current image
 
             _context.Categories.Update(category);
             await _context.SaveChangesAsync();
+
             return await GetCategoryByIdAsync(category.Id);
         }
 
@@ -165,6 +170,7 @@ namespace Ashnest.Services
         {
             var categories = await _context.Categories
                 .Include(c => c.ParentCategory)
+                .Include(c => c.Discounts) // Include discounts
                 .Where(c => c.ParentCategoryId == parentCategoryId)
                 .ToListAsync();
 
@@ -173,6 +179,28 @@ namespace Ashnest.Services
 
         private CategoryDto MapToDto(Category category)
         {
+            // Get active discount
+            DiscountDto activeDiscount = null;
+            if (category.Discounts != null)
+            {
+                var now = DateTime.UtcNow;
+                activeDiscount = category.Discounts
+                    .Where(d => d.IsActive &&
+                               now >= d.StartDate &&
+                               now <= d.EndDate)
+                    .Select(d => new DiscountDto
+                    {
+                        Id = d.Id,
+                        Name = d.Name,
+                        Description = d.Description,
+                        DiscountPercentage = d.DiscountPercentage,
+                        StartDate = d.StartDate,
+                        EndDate = d.EndDate,
+                        IsActive = d.IsActive
+                    })
+                    .FirstOrDefault();
+            }
+
             return new CategoryDto
             {
                 Id = category.Id,
@@ -182,6 +210,7 @@ namespace Ashnest.Services
                 ImageMimeType = category.ImageMimeType,
                 ParentCategoryId = category.ParentCategoryId,
                 ParentCategoryName = category.ParentCategory?.Name,
+                Discount = activeDiscount, // Add active discount
                 SubCategories = category.SubCategories?.Select(MapToDto).ToList() ?? new List<CategoryDto>()
             };
         }

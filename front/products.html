@@ -364,6 +364,26 @@
             margin-bottom: 15px;
         }
         
+        .original-price {
+            text-decoration: line-through;
+            color: #a0aec0;
+            font-size: 1rem;
+            margin-left: 8px;
+        }
+        
+        .discount-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: var(--danger-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            z-index: 5;
+        }
+        
         .out-of-stock-badge {
             position: absolute;
             top: 50%;
@@ -778,6 +798,7 @@
                                 <li><a class="dropdown-item sort-option" href="#" data-sort="price-asc">السعر (الأقل أولاً)</a></li>
                                 <li><a class="dropdown-item sort-option" href="#" data-sort="price-desc">السعر (الأعلى أولاً)</a></li>
                                 <li><a class="dropdown-item sort-option" href="#" data-sort="newest">الأحدث أولاً</a></li>
+                                <li><a class="dropdown-item sort-option" href="#" data-sort="discount">الأعلى خصماً</a></li>
                             </ul>
                         </div>
                         
@@ -840,6 +861,15 @@
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="inStockFilter">
                                     <label class="form-check-label" for="inStockFilter">متوفر</label>
+                                </div>
+                            </div>
+                            
+                            <!-- Discount Filter -->
+                            <div class="mb-4">
+                                <h6 class="filter-title">الخصومات</h6>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="discountFilter">
+                                    <label class="form-check-label" for="discountFilter">المنتجات المخفضة</label>
                                 </div>
                             </div>
                             
@@ -949,448 +979,730 @@
     </script>
     
     <!-- Common JavaScript -->
-    <script src="js/common.js"></script>
+    <script>
+        // API Configuration
+        const API_BASE_URL = 'https://localhost:7124/api';
+        
+        // DOM Elements
+        const loginLink = document.getElementById('loginLink');
+        const registerLink = document.getElementById('registerLink');
+        const profileLink = document.getElementById('profileLink');
+        const logoutLink = document.getElementById('logoutLink');
+        const userDropdown = document.getElementById('userDropdown');
+        const cartCount = document.querySelector('.cart-count');
+        const categoriesMenu = document.getElementById('categoriesMenu');
+        
+        // Check if user is logged in
+        function checkAuthStatus() {
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            if (token) {
+                // Show user profile and logout links
+                if (loginLink) loginLink.style.display = 'none';
+                if (registerLink) registerLink.style.display = 'none';
+                if (profileLink) profileLink.style.display = 'block';
+                if (logoutLink) logoutLink.style.display = 'block';
+                
+                // Update user avatar
+                if (userDropdown) {
+                    const avatar = userDropdown.querySelector('.user-avatar');
+                    if (avatar) {
+                        avatar.src = `https://ui-avatars.com/api/?name=${user.firstName}+${user.lastName}&background=2c3e50&color=fff`;
+                    }
+                }
+            } else {
+                // Show login and register links
+                if (loginLink) loginLink.style.display = 'block';
+                if (registerLink) registerLink.style.display = 'block';
+                if (profileLink) profileLink.style.display = 'none';
+                if (logoutLink) logoutLink.style.display = 'none';
+            }
+        }
+        
+        // Logout function
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        }
+        
+        // API Request function
+        async function apiRequest(endpoint, options = {}) {
+            const url = `${API_BASE_URL}${endpoint}`;
+            const token = localStorage.getItem('token');
+            
+            const defaultOptions = {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+            
+            // Add authorization header if token exists
+            if (token) {
+                defaultOptions.headers.Authorization = `Bearer ${token}`;
+            }
+            
+            const config = { ...defaultOptions, ...options };
+            
+            // If body is provided and it's not a string, stringify it
+            if (config.body && typeof config.body !== 'string') {
+                config.body = JSON.stringify(config.body);
+            }
+            
+            try {
+                const response = await fetch(url, config);
+                
+                // Handle 401 Unauthorized (token expired or invalid)
+                if (response.status === 401) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    
+                    // Only redirect if not already on login page to prevent infinite loop
+                    if (!window.location.pathname.includes('login.html')) {
+                        window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.pathname);
+                    }
+                    throw new Error('Session expired. Please login again.');
+                }
+                
+                if (!response.ok) {
+                    let errorMessage = 'Something went wrong';
+                    
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.message || errorData.title || JSON.stringify(errorData);
+                        
+                        // If it's a validation error, get more details
+                        if (errorData.errors) {
+                            const validationErrors = Object.values(errorData.errors)
+                                .flat()
+                                .join(', ');
+                            errorMessage = validationErrors || errorMessage;
+                        }
+                    } catch (e) {
+                        // If we can't parse the error response, use the status text
+                        errorMessage = response.statusText || `Error ${response.status}`;
+                    }
+                    
+                    throw new Error(errorMessage);
+                }
+                
+                // For 204 No Content responses
+                if (response.status === 204) {
+                    return null;
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error('API Request Error:', error);
+                throw error;
+            }
+        }
+        
+        // Load categories for navigation
+        async function loadCategories() {
+            try {
+                const categories = await apiRequest('/categories');
+                
+                if (categoriesMenu) {
+                    categoriesMenu.innerHTML = '';
+                    categories.forEach(category => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<a class="dropdown-item" href="products.html?category=${category.id}">${category.name}</a>`;
+                        categoriesMenu.appendChild(li);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading categories:', error);
+            }
+        }
+        
+        // Update cart count
+        async function updateCartCount() {
+            const token = localStorage.getItem('token');
+            
+            if (!token || !cartCount) return;
+            
+            try {
+                const cart = await apiRequest('/cart');
+                cartCount.textContent = cart.totalItems || 0;
+            } catch (error) {
+                console.error('Error updating cart count:', error);
+            }
+        }
+        
+        // Format price
+        function formatPrice(price) {
+            return new Intl.NumberFormat('ar-SA', {
+                style: 'currency',
+                currency: 'SAR',
+                minimumFractionDigits: 0
+            }).format(price);
+        }
+        
+        // Format date
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('ar-SA', options);
+        }
+        
+        // Show notification
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type} position-fixed top-0 start-50 translate-middle-x mt-3`;
+            notification.style.zIndex = '9999';
+            notification.style.dir = 'rtl';
+            notification.style.textAlign = 'right';
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+        
+        // Initialize common functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuthStatus();
+            loadCategories();
+            updateCartCount();
+            
+            // Add event listeners
+            if (logoutLink) {
+                logoutLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    logout();
+                });
+            }
+            
+            // Search functionality
+            const searchInput = document.querySelector('.search-input');
+            const searchBtn = document.querySelector('.search-btn');
+            
+            if (searchBtn && searchInput) {
+                searchBtn.addEventListener('click', () => {
+                    const searchTerm = searchInput.value.trim();
+                    if (searchTerm) {
+                        window.location.href = `products.html?search=${encodeURIComponent(searchTerm)}`;
+                    }
+                });
+                
+                searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        const searchTerm = searchInput.value.trim();
+                        if (searchTerm) {
+                            window.location.href = `products.html?search=${encodeURIComponent(searchTerm)}`;
+                        }
+                    }
+                });
+            }
+            
+            // Newsletter form
+            const newsletterForm = document.querySelector('.newsletter-form');
+            if (newsletterForm) {
+                newsletterForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const email = newsletterForm.querySelector('input[type="email"]').value;
+                    showNotification(`تم اشتراكك بنجاح باستخدام البريد الإلكتروني: ${email}`);
+                    newsletterForm.reset();
+                });
+            }
+        });
+    </script>
     
     <!-- Page Specific JavaScript -->
     <script>
-     document.addEventListener('DOMContentLoaded', () => {
-    // Helper function to convert ArrayBuffer to Base64
-    function arrayBufferToBase64(buffer) {
-        let binary = '';
-        const bytes = new Uint8Array(buffer);
-        const len = bytes.byteLength;
-        for (let i = 0; i < len; i++) {
-            binary += String.fromCharCode(bytes[i]);
-        }
-        return window.btoa(binary);
-    }
-    // Get URL parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    const categoryId = urlParams.get('category');
-    const search = urlParams.get('search');
-    
-    // Set initial filters
-    if (categoryId) {
-        document.getElementById('categoriesFilter').innerHTML = `
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="cat-${categoryId}" checked>
-                <label class="form-check-label" for="cat-${categoryId}">
-                    جاري التحميل...
-                </label>
-            </div>
-        `;
-    }
-    
-    if (search) {
-        document.getElementById('searchFilter').value = search;
-    }
-    
-    // Load categories for filter and navbar
-    async function loadCategories() {
-        try {
-            const categories = await apiRequest('/categories');
+        document.addEventListener('DOMContentLoaded', () => {
+            // Helper function to convert ArrayBuffer to Base64
+            function arrayBufferToBase64(buffer) {
+                let binary = '';
+                const bytes = new Uint8Array(buffer);
+                const len = bytes.byteLength;
+                for (let i = 0; i < len; i++) {
+                    binary += String.fromCharCode(bytes[i]);
+                }
+                return window.btoa(binary);
+            }
             
-            // Load categories for filter
-            const categoriesFilter = document.getElementById('categoriesFilter');
-            categoriesFilter.innerHTML = '';
+            // Get URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const categoryId = urlParams.get('category');
+            const search = urlParams.get('search');
             
-            categories.forEach(category => {
-                const isChecked = categoryId && parseInt(categoryId) === category.id;
-                categoriesFilter.innerHTML += `
+            // Set initial filters
+            if (categoryId) {
+                document.getElementById('categoriesFilter').innerHTML = `
                     <div class="form-check">
-                        <input class="form-check-input category-filter" type="checkbox" id="cat-${category.id}" value="${category.id}" ${isChecked ? 'checked' : ''}>
-                        <label class="form-check-label" for="cat-${category.id}">
-                            ${category.name}
+                        <input class="form-check-input" type="checkbox" id="cat-${categoryId}" checked>
+                        <label class="form-check-label" for="cat-${categoryId}">
+                            جاري التحميل...
                         </label>
                     </div>
                 `;
-            });
-            
-            // Load categories for navbar dropdown
-            const categoriesMenu = document.getElementById('categoriesMenu');
-            categoriesMenu.innerHTML = '';
-            
-            categories.forEach(category => {
-                categoriesMenu.innerHTML += `
-                    <li><a class="dropdown-item" href="products.html?category=${category.id}">${category.name}</a></li>
-                `;
-            });
-        } catch (error) {
-            console.error('Error loading categories:', error);
-        }
-    }
-    
-    // Load products
-    let currentPage = 1;
-    let currentSort = 'newest';
-    let currentView = 'grid';
-    let currentFilters = {
-        category: categoryId || null,
-        search: search || null,
-        minPrice: null,
-        maxPrice: null,
-        inStock: false
-    };
-    
-    async function loadProducts(page = 1, sort = 'newest') {
-        try {
-            // Build query parameters
-            let queryParams = new URLSearchParams();
-            queryParams.append('page', page);
-            queryParams.append('pageSize', 12);
-            
-            if (currentFilters.category) {
-                queryParams.append('categoryId', currentFilters.category);
             }
             
-            if (currentFilters.search) {
-                queryParams.append('search', currentFilters.search);
+            if (search) {
+                document.getElementById('searchFilter').value = search;
             }
             
-            if (currentFilters.inStock) {
-                queryParams.append('status', 'Active');
+            // Load categories for filter and navbar
+            async function loadCategories() {
+                try {
+                    const categories = await apiRequest('/categories');
+                    
+                    // Load categories for filter
+                    const categoriesFilter = document.getElementById('categoriesFilter');
+                    categoriesFilter.innerHTML = '';
+                    
+                    categories.forEach(category => {
+                        const isChecked = categoryId && parseInt(categoryId) === category.id;
+                        categoriesFilter.innerHTML += `
+                            <div class="form-check">
+                                <input class="form-check-input category-filter" type="checkbox" id="cat-${category.id}" value="${category.id}" ${isChecked ? 'checked' : ''}>
+                                <label class="form-check-label" for="cat-${category.id}">
+                                    ${category.name}
+                                </label>
+                            </div>
+                        `;
+                    });
+                    
+                    // Load categories for navbar dropdown
+                    const categoriesMenu = document.getElementById('categoriesMenu');
+                    categoriesMenu.innerHTML = '';
+                    
+                    categories.forEach(category => {
+                        categoriesMenu.innerHTML += `
+                            <li><a class="dropdown-item" href="products.html?category=${category.id}">${category.name}</a></li>
+                        `;
+                    });
+                } catch (error) {
+                    console.error('Error loading categories:', error);
+                }
             }
             
-            // Get products
-            const products = await apiRequest(`/products?${queryParams}`);
+            // Load products
+            let currentPage = 1;
+            let currentSort = 'newest';
+            let currentView = 'grid';
+            let currentFilters = {
+                category: categoryId || null,
+                search: search || null,
+                minPrice: null,
+                maxPrice: null,
+                inStock: false,
+                hasDiscount: false
+            };
             
-            // Render products
-            const productsContainer = document.getElementById('productsContainer');
-            productsContainer.innerHTML = '';
+            async function loadProducts(page = 1, sort = 'newest') {
+                try {
+                    // Build query parameters
+                    let queryParams = new URLSearchParams();
+                    queryParams.append('page', page);
+                    queryParams.append('pageSize', 12);
+                    
+                    if (currentFilters.category) {
+                        queryParams.append('categoryId', currentFilters.category);
+                    }
+                    
+                    if (currentFilters.search) {
+                        queryParams.append('search', currentFilters.search);
+                    }
+                    
+                    if (currentFilters.inStock) {
+                        queryParams.append('status', 'Active');
+                    }
+                    
+                    // Get products
+                    const products = await apiRequest(`/products?${queryParams}`);
+                    
+                    // Apply client-side filtering for discounts
+                    let filteredProducts = products;
+                    if (currentFilters.hasDiscount) {
+                        filteredProducts = products.filter(product => product.discountedPrice && product.discountedPrice < product.price);
+                    }
+                    
+                    // Apply client-side sorting for discounts
+                    if (sort === 'discount') {
+                        filteredProducts.sort((a, b) => {
+                            const discountA = a.price - (a.discountedPrice || a.price);
+                            const discountB = b.price - (b.discountedPrice || b.price);
+                            return discountB - discountA;
+                        });
+                    } else if (sort === 'price-asc') {
+                        filteredProducts.sort((a, b) => {
+                            const priceA = a.discountedPrice || a.price;
+                            const priceB = b.discountedPrice || b.price;
+                            return priceA - priceB;
+                        });
+                    } else if (sort === 'price-desc') {
+                        filteredProducts.sort((a, b) => {
+                            const priceA = a.discountedPrice || a.price;
+                            const priceB = b.discountedPrice || b.price;
+                            return priceB - priceA;
+                        });
+                    } else if (sort === 'name-asc') {
+                        filteredProducts.sort((a, b) => a.name.localeCompare(b.name, 'ar'));
+                    } else if (sort === 'name-desc') {
+                        filteredProducts.sort((a, b) => b.name.localeCompare(a.name, 'ar'));
+                    }
+                    
+                    // Render products
+                    const productsContainer = document.getElementById('productsContainer');
+                    productsContainer.innerHTML = '';
+                    
+                    if (filteredProducts.length === 0) {
+                        productsContainer.innerHTML = `
+                            <div class="col-12 text-center py-5">
+                                <i class="bi bi-inbox display-1 text-muted"></i>
+                                <h4 class="mt-3">لا توجد منتجات</h4>
+                                <p class="text-muted">لم يتم العثور على منتجات تطابق معايير البحث</p>
+                                <button class="btn btn-outline-primary" id="resetFiltersBtn">إعادة تعيين الفلاتر</button>
+                            </div>
+                        `;
+                        
+                        document.getElementById('resetFiltersBtn').addEventListener('click', resetFilters);
+                        return;
+                    }
+                    
+                    filteredProducts.forEach((product, index) => {
+                        const productCard = createProductCard(product);
+                        productCard.setAttribute('data-aos', 'fade-up');
+                        productCard.setAttribute('data-aos-delay', (index * 100).toString());
+                        productsContainer.appendChild(productCard);
+                    });
+                    
+                    // Refresh AOS
+                    AOS.refresh();
+                    
+                    // Update pagination
+                    updatePagination(page, filteredProducts.length >= 12);
+                } catch (error) {
+                    console.error('Error loading products:', error);
+                    const productsContainer = document.getElementById('productsContainer');
+                    productsContainer.innerHTML = `
+                        <div class="col-12 text-center py-5">
+                            <i class="bi bi-exclamation-triangle display-1 text-danger"></i>
+                            <h4 class="mt-3">حدث خطأ</h4>
+                            <p class="text-muted">لم نتمكن من تحميل المنتجات. يرجى المحاولة مرة أخرى لاحقاً.</p>
+                        </div>
+                    `;
+                }
+            }
             
-            if (products.length === 0) {
-                productsContainer.innerHTML = `
-                    <div class="col-12 text-center py-5">
-                        <i class="bi bi-inbox display-1 text-muted"></i>
-                        <h4 class="mt-3">لا توجد منتجات</h4>
-                        <p class="text-muted">لم يتم العثور على منتجات تطابق معايير البحث</p>
-                        <button class="btn btn-outline-primary" id="resetFiltersBtn">إعادة تعيين الفلاتر</button>
+            // Create product card with improved image handling and discount display
+            function createProductCard(product) {
+                const col = document.createElement('div');
+                col.className = currentView === 'grid' ? 'col-md-6 col-lg-4 mb-4' : 'col-12 mb-4';
+                
+                function getImageUrl(image) {
+                    if (!image) return 'https://via.placeholder.com/300x300?text=No+Image';
+                    
+                    // If image has a URL property
+                    if (image.url) return image.url;
+                    
+                    // If imageData is a base64 string
+                    if (typeof image.imageData === 'string') {
+                        return `data:${image.mimeType || 'image/jpeg'};base64,${image.imageData}`;
+                    }
+                    
+                    // If imageData is binary
+                    if (image.imageData) {
+                        try {
+                            const base64 = arrayBufferToBase64(image.imageData);
+                            return `data:${image.mimeType || 'image/jpeg'};base64,${base64}`;
+                        } catch (e) {
+                            console.error('Error converting image to base64:', e);
+                        }
+                    }
+                    
+                    return 'https://via.placeholder.com/300x300?text=Invalid+Image';
+                }
+                
+                const primaryImage = product.images && product.images.length > 0 
+                    ? product.images.find(img => img.isPrimary) || product.images[0]
+                    : null;
+                
+                const imageUrl = getImageUrl(primaryImage);
+                
+                // Calculate discount percentage
+                let discountPercentage = 0;
+                if (product.discountedPrice && product.discountedPrice < product.price) {
+                    discountPercentage = Math.round((1 - product.discountedPrice / product.price) * 100);
+                }
+                
+                col.innerHTML = `
+                    <div class="card product-card h-100">
+                        <div class="product-img-container">
+                            <img src="${imageUrl}" class="card-img-top" alt="${product.name}" 
+                                 onerror="this.src='https://via.placeholder.com/300x300?text=Image+Not+Available'">
+                            ${discountPercentage > 0 ? `<span class="discount-badge">${discountPercentage}% خصم</span>` : ''}
+                            <div class="product-actions">
+                                <button class="btn btn-sm btn-light add-to-wishlist" data-product-id="${product.id}">
+                                    <i class="bi bi-heart"></i>
+                                </button>
+                                <button class="btn btn-sm btn-light quick-view" data-product-id="${product.id}">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            ${product.stockQuantity === 0 ? '<div class="out-of-stock-badge">نفد المخزون</div>' : ''}
+                        </div>
+                        <div class="card-body">
+                            <h5 class="product-title">${product.name}</h5>
+                            <p class="product-category">${product.categoryName}</p>
+                            <div class="product-rating">
+                                ${renderRating(product.averageRating)}
+                                <span>(${product.reviewCount})</span>
+                            </div>
+                            <div class="product-price">
+                                ${discountPercentage > 0 ? 
+                                    `<span class="text-danger">${formatPrice(product.discountedPrice)}</span>
+                                     <span class="original-price">${formatPrice(product.price)}</span>` 
+                                    : formatPrice(product.price)
+                                }
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent border-top-0">
+                            <button class="btn btn-primary add-to-cart w-100" data-product-id="${product.id}" ${product.stockQuantity === 0 ? 'disabled' : ''}>
+                                <i class="bi bi-cart-plus"></i> أضف إلى السلة
+                            </button>
+                        </div>
                     </div>
                 `;
                 
-                document.getElementById('resetFiltersBtn').addEventListener('click', resetFilters);
-                return;
+                // Add event listeners
+                const addToCartBtn = col.querySelector('.add-to-cart');
+                if (addToCartBtn) {
+                    addToCartBtn.addEventListener('click', () => addToCart(product.id));
+                }
+                
+                const addToWishlistBtn = col.querySelector('.add-to-wishlist');
+                if (addToWishlistBtn) {
+                    addToWishlistBtn.addEventListener('click', () => addToWishlist(product.id));
+                }
+                
+                const quickViewBtn = col.querySelector('.quick-view');
+                if (quickViewBtn) {
+                    quickViewBtn.addEventListener('click', () => {
+                        window.location.href = `product-detail.html?id=${product.id}`;
+                    });
+                }
+                
+                return col;
             }
             
-            products.forEach((product, index) => {
-                const productCard = createProductCard(product);
-                productCard.setAttribute('data-aos', 'fade-up');
-                productCard.setAttribute('data-aos-delay', (index * 100).toString());
-                productsContainer.appendChild(productCard);
-            });
-            
-            // Refresh AOS
-            AOS.refresh();
+            // Render rating stars
+            function renderRating(rating) {
+                let stars = '';
+                const fullStars = Math.floor(rating);
+                const hasHalfStar = rating % 1 >= 0.5;
+                
+                for (let i = 1; i <= 5; i++) {
+                    if (i <= fullStars) {
+                        stars += '<i class="bi bi-star-fill"></i>';
+                    } else if (i === fullStars + 1 && hasHalfStar) {
+                        stars += '<i class="bi bi-star-half"></i>';
+                    } else {
+                        stars += '<i class="bi bi-star"></i>';
+                    }
+                }
+                
+                return stars;
+            }
             
             // Update pagination
-            updatePagination(page, products.length >= 12);
-        } catch (error) {
-            console.error('Error loading products:', error);
-            const productsContainer = document.getElementById('productsContainer');
-            productsContainer.innerHTML = `
-                <div class="col-12 text-center py-5">
-                    <i class="bi bi-exclamation-triangle display-1 text-danger"></i>
-                    <h4 class="mt-3">حدث خطأ</h4>
-                    <p class="text-muted">لم نتمكن من تحميل المنتجات. يرجى المحاولة مرة أخرى لاحقاً.</p>
-                </div>
-            `;
-        }
-    }
-    
-    // Create product card with improved image handling
-    function createProductCard(product) {
-        const col = document.createElement('div');
-        col.className = currentView === 'grid' ? 'col-md-6 col-lg-4 mb-4' : 'col-12 mb-4';
-        
-        function getImageUrl(image) {
-            if (!image) return 'https://via.placeholder.com/300x300?text=No+Image';
-            
-            // If image has a URL property
-            if (image.url) return image.url;
-            
-            // If imageData is a base64 string
-            if (typeof image.imageData === 'string') {
-                return `data:${image.mimeType || 'image/jpeg'};base64,${image.imageData}`;
+            function updatePagination(currentPage, hasNextPage) {
+                const pagination = document.getElementById('pagination');
+                pagination.innerHTML = '';
+                
+                // Previous button
+                const prevLi = document.createElement('li');
+                prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+                prevLi.innerHTML = `<a class="page-link" href="#" data-page="${currentPage - 1}">السابق</a>`;
+                pagination.appendChild(prevLi);
+                
+                // Page numbers
+                for (let i = 1; i <= 5; i++) {
+                    const page = currentPage - 3 + i;
+                    if (page > 0 && (page === 1 || page <= currentPage + 1 || (hasNextPage && page <= currentPage + 2))) {
+                        const li = document.createElement('li');
+                        li.className = `page-item ${page === currentPage ? 'active' : ''}`;
+                        li.innerHTML = `<a class="page-link" href="#" data-page="${page}">${page}</a>`;
+                        pagination.appendChild(li);
+                    }
+                }
+                
+                // Next button
+                const nextLi = document.createElement('li');
+                nextLi.className = `page-item ${!hasNextPage ? 'disabled' : ''}`;
+                nextLi.innerHTML = `<a class="page-link" href="#" data-page="${currentPage + 1}">التالي</a>`;
+                pagination.appendChild(nextLi);
+                
+                // Add event listeners
+                pagination.querySelectorAll('.page-link').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const page = parseInt(link.dataset.page);
+                        if (page && page !== currentPage) {
+                            currentPage = page;
+                            loadProducts(page, currentSort);
+                        }
+                    });
+                });
             }
             
-            // If imageData is binary
-            if (image.imageData) {
+            // Add to cart function
+            async function addToCart(productId) {
+                const token = localStorage.getItem('token');
+                
+                if (!token) {
+                    showNotification('يجب تسجيل الدخول أولاً', 'warning');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 1000);
+                    return;
+                }
+                
                 try {
-                    const base64 = arrayBufferToBase64(image.imageData);
-                    return `data:${image.mimeType || 'image/jpeg'};base64,${base64}`;
-                } catch (e) {
-                    console.error('Error converting image to base64:', e);
+                    await apiRequest('/cart/items', {
+                        method: 'POST',
+                        body: JSON.stringify({ productId, quantity: 1 })
+                    });
+                    
+                    showNotification('تمت إضافة المنتج إلى السلة');
+                    updateCartCount();
+                } catch (error) {
+                    showNotification(error.message, 'danger');
                 }
             }
             
-            return 'https://via.placeholder.com/300x300?text=Invalid+Image';
-        }
-        
-        const primaryImage = product.images && product.images.length > 0 
-            ? product.images.find(img => img.isPrimary) || product.images[0]
-            : null;
-        
-        const imageUrl = getImageUrl(primaryImage);
-        
-        col.innerHTML = `
-            <div class="card product-card h-100">
-                <div class="product-img-container">
-                    <img src="${imageUrl}" class="card-img-top" alt="${product.name}" 
-                         onerror="this.src='https://via.placeholder.com/300x300?text=Image+Not+Available'">
-                    <div class="product-actions">
-                        <button class="btn btn-sm btn-light add-to-wishlist" data-product-id="${product.id}">
-                            <i class="bi bi-heart"></i>
-                        </button>
-                        <button class="btn btn-sm btn-light quick-view" data-product-id="${product.id}">
-                            <i class="bi bi-eye"></i>
-                        </button>
-                    </div>
-                    ${product.stockQuantity === 0 ? '<div class="out-of-stock-badge">نفد المخزون</div>' : ''}
-                </div>
-                <div class="card-body">
-                    <h5 class="product-title">${product.name}</h5>
-                    <p class="product-category">${product.categoryName}</p>
-                    <div class="product-rating">
-                        ${renderRating(product.averageRating)}
-                        <span>(${product.reviewCount})</span>
-                    </div>
-                    <div class="product-price">
-                        ${formatPrice(product.price)}
-                    </div>
-                </div>
-                <div class="card-footer bg-transparent border-top-0">
-                    <button class="btn btn-primary add-to-cart w-100" data-product-id="${product.id}" ${product.stockQuantity === 0 ? 'disabled' : ''}>
-                        <i class="bi bi-cart-plus"></i> أضف إلى السلة
-                    </button>
-                </div>
-            </div>
-        `;
-        
-        // Add event listeners
-        const addToCartBtn = col.querySelector('.add-to-cart');
-        if (addToCartBtn) {
-            addToCartBtn.addEventListener('click', () => addToCart(product.id));
-        }
-        
-        const addToWishlistBtn = col.querySelector('.add-to-wishlist');
-        if (addToWishlistBtn) {
-            addToWishlistBtn.addEventListener('click', () => addToWishlist(product.id));
-        }
-        
-        const quickViewBtn = col.querySelector('.quick-view');
-        if (quickViewBtn) {
-            quickViewBtn.addEventListener('click', () => {
-                window.location.href = `product-detail.html?id=${product.id}`;
+            // Add to wishlist function
+            async function addToWishlist(productId) {
+                const token = localStorage.getItem('token');
+                
+                if (!token) {
+                    showNotification('يجب تسجيل الدخول أولاً', 'warning');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 1000);
+                    return;
+                }
+                
+                try {
+                    await apiRequest(`/wishlist/products/${productId}`, {
+                        method: 'POST'
+                    });
+                    
+                    showNotification('تمت إضافة المنتج إلى المفضلة');
+                } catch (error) {
+                    showNotification(error.message, 'danger');
+                }
+            }
+            
+            // Apply filters
+            function applyFilters() {
+                // Get selected categories
+                const selectedCategories = Array.from(document.querySelectorAll('.category-filter:checked'))
+                    .map(checkbox => checkbox.value);
+                
+                currentFilters.category = selectedCategories.length > 0 ? selectedCategories[0] : null;
+                
+                // Get search term
+                currentFilters.search = document.getElementById('searchFilter').value || null;
+                
+                // Get price range
+                const minPrice = document.getElementById('minPrice').value;
+                const maxPrice = document.getElementById('maxPrice').value;
+                
+                currentFilters.minPrice = minPrice ? parseFloat(minPrice) : null;
+                currentFilters.maxPrice = maxPrice ? parseFloat(maxPrice) : null;
+                
+                // Get in stock filter
+                currentFilters.inStock = document.getElementById('inStockFilter').checked;
+                
+                // Get discount filter
+                currentFilters.hasDiscount = document.getElementById('discountFilter').checked;
+                
+                // Reload products
+                currentPage = 1;
+                loadProducts(currentPage, currentSort);
+            }
+            
+            // Reset filters
+            function resetFilters() {
+                // Reset form
+                document.getElementById('searchFilter').value = '';
+                document.getElementById('minPrice').value = '';
+                document.getElementById('maxPrice').value = '';
+                document.getElementById('inStockFilter').checked = false;
+                document.getElementById('discountFilter').checked = false;
+                
+                // Uncheck all categories
+                document.querySelectorAll('.category-filter').forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                
+                // Reset filters
+                currentFilters = {
+                    category: null,
+                    search: null,
+                    minPrice: null,
+                    maxPrice: null,
+                    inStock: false,
+                    hasDiscount: false
+                };
+                
+                // Reload products
+                currentPage = 1;
+                loadProducts(currentPage, currentSort);
+            }
+            
+            // Event listeners
+            document.getElementById('applySearchFilter').addEventListener('click', applyFilters);
+            document.getElementById('applyPriceFilter').addEventListener('click', applyFilters);
+            document.getElementById('resetFilters').addEventListener('click', resetFilters);
+            
+            // Sort options
+            document.querySelectorAll('.sort-option').forEach(option => {
+                option.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    currentSort = option.dataset.sort;
+                    currentPage = 1;
+                    loadProducts(currentPage, currentSort);
+                });
             });
-        }
-        
-        return col;
-    }
-    
-    // Render rating stars
-    function renderRating(rating) {
-        let stars = '';
-        const fullStars = Math.floor(rating);
-        const hasHalfStar = rating % 1 >= 0.5;
-        
-        for (let i = 1; i <= 5; i++) {
-            if (i <= fullStars) {
-                stars += '<i class="bi bi-star-fill"></i>';
-            } else if (i === fullStars + 1 && hasHalfStar) {
-                stars += '<i class="bi bi-star-half"></i>';
-            } else {
-                stars += '<i class="bi bi-star"></i>';
-            }
-        }
-        
-        return stars;
-    }
-    
-    // Update pagination
-    function updatePagination(currentPage, hasNextPage) {
-        const pagination = document.getElementById('pagination');
-        pagination.innerHTML = '';
-        
-        // Previous button
-        const prevLi = document.createElement('li');
-        prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
-        prevLi.innerHTML = `<a class="page-link" href="#" data-page="${currentPage - 1}">السابق</a>`;
-        pagination.appendChild(prevLi);
-        
-        // Page numbers
-        for (let i = 1; i <= 5; i++) {
-            const page = currentPage - 3 + i;
-            if (page > 0 && (page === 1 || page <= currentPage + 1 || (hasNextPage && page <= currentPage + 2))) {
-                const li = document.createElement('li');
-                li.className = `page-item ${page === currentPage ? 'active' : ''}`;
-                li.innerHTML = `<a class="page-link" href="#" data-page="${page}">${page}</a>`;
-                pagination.appendChild(li);
-            }
-        }
-        
-        // Next button
-        const nextLi = document.createElement('li');
-        nextLi.className = `page-item ${!hasNextPage ? 'disabled' : ''}`;
-        nextLi.innerHTML = `<a class="page-link" href="#" data-page="${currentPage + 1}">التالي</a>`;
-        pagination.appendChild(nextLi);
-        
-        // Add event listeners
-        pagination.querySelectorAll('.page-link').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const page = parseInt(link.dataset.page);
-                if (page && page !== currentPage) {
-                    currentPage = page;
-                    loadProducts(page, currentSort);
+            
+            // View options
+            document.querySelectorAll('.view-option').forEach(option => {
+                option.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    currentView = option.dataset.view;
+                    currentPage = 1;
+                    loadProducts(currentPage, currentSort);
+                });
+            });
+            
+            // Category filter change
+            document.addEventListener('change', (e) => {
+                if (e.target.classList.contains('category-filter')) {
+                    applyFilters();
                 }
             });
-        });
-    }
-    
-    // Add to cart function
-    async function addToCart(productId) {
-        const token = localStorage.getItem('token');
-        
-        if (!token) {
-            showNotification('يجب تسجيل الدخول أولاً', 'warning');
-            setTimeout(() => {
-                window.location.href = 'login.html';
-            }, 1000);
-            return;
-        }
-        
-        try {
-            await apiRequest('/cart/items', {
-                method: 'POST',
-                body: JSON.stringify({ productId, quantity: 1 })
+            
+            // Discount filter change
+            document.getElementById('discountFilter').addEventListener('change', applyFilters);
+            
+            // Enter key on search filter
+            document.getElementById('searchFilter').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    applyFilters();
+                }
             });
             
-            showNotification('تمت إضافة المنتج إلى السلة');
-            updateCartCount();
-        } catch (error) {
-            showNotification(error.message, 'danger');
-        }
-    }
-    
-    // Add to wishlist function
-    async function addToWishlist(productId) {
-        const token = localStorage.getItem('token');
-        
-        if (!token) {
-            showNotification('يجب تسجيل الدخول أولاً', 'warning');
-            setTimeout(() => {
-                window.location.href = 'login.html';
-            }, 1000);
-            return;
-        }
-        
-        try {
-            await apiRequest(`/wishlist/products/${productId}`, {
-                method: 'POST'
-            });
-            
-            showNotification('تمت إضافة المنتج إلى المفضلة');
-        } catch (error) {
-            showNotification(error.message, 'danger');
-        }
-    }
-    
-    // Apply filters
-    function applyFilters() {
-        // Get selected categories
-        const selectedCategories = Array.from(document.querySelectorAll('.category-filter:checked'))
-            .map(checkbox => checkbox.value);
-        
-        currentFilters.category = selectedCategories.length > 0 ? selectedCategories[0] : null;
-        
-        // Get search term
-        currentFilters.search = document.getElementById('searchFilter').value || null;
-        
-        // Get price range
-        const minPrice = document.getElementById('minPrice').value;
-        const maxPrice = document.getElementById('maxPrice').value;
-        
-        currentFilters.minPrice = minPrice ? parseFloat(minPrice) : null;
-        currentFilters.maxPrice = maxPrice ? parseFloat(maxPrice) : null;
-        
-        // Get in stock filter
-        currentFilters.inStock = document.getElementById('inStockFilter').checked;
-        
-        // Reload products
-        currentPage = 1;
-        loadProducts(currentPage, currentSort);
-    }
-    
-    // Reset filters
-    function resetFilters() {
-        // Reset form
-        document.getElementById('searchFilter').value = '';
-        document.getElementById('minPrice').value = '';
-        document.getElementById('maxPrice').value = '';
-        document.getElementById('inStockFilter').checked = false;
-        
-        // Uncheck all categories
-        document.querySelectorAll('.category-filter').forEach(checkbox => {
-            checkbox.checked = false;
-        });
-        
-        // Reset filters
-        currentFilters = {
-            category: null,
-            search: null,
-            minPrice: null,
-            maxPrice: null,
-            inStock: false
-        };
-        
-        // Reload products
-        currentPage = 1;
-        loadProducts(currentPage, currentSort);
-    }
-    
-    // Event listeners
-    document.getElementById('applySearchFilter').addEventListener('click', applyFilters);
-    document.getElementById('applyPriceFilter').addEventListener('click', applyFilters);
-    document.getElementById('resetFilters').addEventListener('click', resetFilters);
-    
-    // Sort options
-    document.querySelectorAll('.sort-option').forEach(option => {
-        option.addEventListener('click', (e) => {
-            e.preventDefault();
-            currentSort = option.dataset.sort;
-            currentPage = 1;
+            // Initialize
+            loadCategories();
             loadProducts(currentPage, currentSort);
         });
-    });
-    
-    // View options
-    document.querySelectorAll('.view-option').forEach(option => {
-        option.addEventListener('click', (e) => {
-            e.preventDefault();
-            currentView = option.dataset.view;
-            currentPage = 1;
-            loadProducts(currentPage, currentSort);
-        });
-    });
-    
-    // Category filter change
-    document.addEventListener('change', (e) => {
-        if (e.target.classList.contains('category-filter')) {
-            applyFilters();
-        }
-    });
-    
-    // Enter key on search filter
-    document.getElementById('searchFilter').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            applyFilters();
-        }
-    });
-    
-    // Initialize
-    loadCategories();
-    loadProducts(currentPage, currentSort);
-});
     </script>
 </body>
 </html>

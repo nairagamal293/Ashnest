@@ -260,6 +260,20 @@
             transition: transform 0.5s ease;
         }
         
+        .discount-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background-color: var(--danger-color);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 1rem;
+            z-index: 5;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
         .thumbnail-container {
             overflow-x: auto;
             padding-bottom: 10px;
@@ -325,10 +339,26 @@
         }
         
         .product-price {
+            margin-bottom: 15px;
+        }
+        
+        .current-price {
             font-size: 1.8rem;
             font-weight: 700;
             color: var(--primary-color);
-            margin-bottom: 15px;
+        }
+        
+        .original-price {
+            font-size: 1.2rem;
+            text-decoration: line-through;
+            color: var(--gray-color);
+            margin-right: 10px;
+        }
+        
+        .discount-percentage {
+            color: var(--danger-color);
+            font-weight: 600;
+            font-size: 1rem;
         }
         
         .product-stock {
@@ -658,6 +688,19 @@
             margin-bottom: 15px;
         }
         
+        .discount-badge-small {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--danger-color);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            z-index: 2;
+        }
+        
         /* Footer */
         .footer {
             background-color: var(--dark-color);
@@ -870,8 +913,12 @@
                 font-size: 1.5rem;
             }
             
-            .product-price {
+            .current-price {
                 font-size: 1.5rem;
+            }
+            
+            .original-price {
+                font-size: 1rem;
             }
             
             .product-img-container {
@@ -937,8 +984,17 @@
                 font-size: 1.3rem;
             }
             
-            .product-price {
+            .current-price {
                 font-size: 1.3rem;
+            }
+            
+            .original-price {
+                font-size: 0.9rem;
+            }
+            
+            .discount-badge {
+                font-size: 0.8rem;
+                padding: 6px 12px;
             }
             
             .section-title {
@@ -1053,6 +1109,7 @@
                     <div class="product-images">
                         <div class="main-image-container">
                             <img id="mainProductImage" src="https://via.placeholder.com/600x600?text=Loading..." class="img-fluid" alt="Product Image">
+                            <div id="discountBadge" class="discount-badge" style="display: none;"></div>
                         </div>
                         <div class="thumbnail-container d-flex mt-3" id="productThumbnails">
                             <!-- Thumbnails will be loaded dynamically -->
@@ -1333,553 +1390,820 @@
     </script>
     
     <!-- Common JavaScript -->
-    <script src="js/common.js"></script>
+    <script>
+        // API Configuration
+        const API_BASE_URL = 'https://localhost:7124/api';
+        
+        // DOM Elements
+        const loginLink = document.getElementById('loginLink');
+        const registerLink = document.getElementById('registerLink');
+        const profileLink = document.getElementById('profileLink');
+        const logoutLink = document.getElementById('logoutLink');
+        const userDropdown = document.getElementById('userDropdown');
+        const cartCount = document.querySelector('.cart-count');
+        const categoriesMenu = document.getElementById('categoriesMenu');
+        
+        // Check if user is logged in
+        function checkAuthStatus() {
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            if (token) {
+                // Show user profile and logout links
+                if (loginLink) loginLink.style.display = 'none';
+                if (registerLink) registerLink.style.display = 'none';
+                if (profileLink) profileLink.style.display = 'block';
+                if (logoutLink) logoutLink.style.display = 'block';
+                
+                // Update user avatar
+                if (userDropdown) {
+                    const avatar = userDropdown.querySelector('.user-avatar');
+                    if (avatar) {
+                        avatar.src = `https://ui-avatars.com/api/?name=${user.firstName}+${user.lastName}&background=2c3e50&color=fff`;
+                    }
+                }
+            } else {
+                // Show login and register links
+                if (loginLink) loginLink.style.display = 'block';
+                if (registerLink) registerLink.style.display = 'block';
+                if (profileLink) profileLink.style.display = 'none';
+                if (logoutLink) logoutLink.style.display = 'none';
+            }
+        }
+        
+        // Logout function
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        }
+        
+        // API Request function
+        async function apiRequest(endpoint, options = {}) {
+            const url = `${API_BASE_URL}${endpoint}`;
+            const token = localStorage.getItem('token');
+            
+            const defaultOptions = {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+            
+            // Add authorization header if token exists
+            if (token) {
+                defaultOptions.headers.Authorization = `Bearer ${token}`;
+            }
+            
+            const config = { ...defaultOptions, ...options };
+            
+            // If body is provided and it's not a string, stringify it
+            if (config.body && typeof config.body !== 'string') {
+                config.body = JSON.stringify(config.body);
+            }
+            
+            try {
+                const response = await fetch(url, config);
+                
+                // Handle 401 Unauthorized (token expired or invalid)
+                if (response.status === 401) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    
+                    // Only redirect if not already on login page to prevent infinite loop
+                    if (!window.location.pathname.includes('login.html')) {
+                        window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.pathname);
+                    }
+                    throw new Error('Session expired. Please login again.');
+                }
+                
+                if (!response.ok) {
+                    let errorMessage = 'Something went wrong';
+                    
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.message || errorData.title || JSON.stringify(errorData);
+                        
+                        // If it's a validation error, get more details
+                        if (errorData.errors) {
+                            const validationErrors = Object.values(errorData.errors)
+                                .flat()
+                                .join(', ');
+                            errorMessage = validationErrors || errorMessage;
+                        }
+                    } catch (e) {
+                        // If we can't parse the error response, use the status text
+                        errorMessage = response.statusText || `Error ${response.status}`;
+                    }
+                    
+                    throw new Error(errorMessage);
+                }
+                
+                // For 204 No Content responses
+                if (response.status === 204) {
+                    return null;
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error('API Request Error:', error);
+                throw error;
+            }
+        }
+        
+        // Load categories for navigation
+        async function loadCategories() {
+            try {
+                const categories = await apiRequest('/categories');
+                
+                if (categoriesMenu) {
+                    categoriesMenu.innerHTML = '';
+                    categories.forEach(category => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<a class="dropdown-item" href="products.html?category=${category.id}">${category.name}</a>`;
+                        categoriesMenu.appendChild(li);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading categories:', error);
+            }
+        }
+        
+        // Update cart count
+        async function updateCartCount() {
+            const token = localStorage.getItem('token');
+            
+            if (!token || !cartCount) return;
+            
+            try {
+                const cart = await apiRequest('/cart');
+                cartCount.textContent = cart.totalItems || 0;
+            } catch (error) {
+                console.error('Error updating cart count:', error);
+            }
+        }
+        
+        // Format price
+        function formatPrice(price) {
+            return new Intl.NumberFormat('ar-SA', {
+                style: 'currency',
+                currency: 'SAR',
+                minimumFractionDigits: 0
+            }).format(price);
+        }
+        
+        // Format date
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('ar-SA', options);
+        }
+        
+        // Show notification
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type} position-fixed top-0 start-50 translate-middle-x mt-3`;
+            notification.style.zIndex = '9999';
+            notification.style.dir = 'rtl';
+            notification.style.textAlign = 'right';
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+        
+        // Initialize common functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuthStatus();
+            loadCategories();
+            updateCartCount();
+            
+            // Add event listeners
+            if (logoutLink) {
+                logoutLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    logout();
+                });
+            }
+            
+            // Search functionality
+            const searchInput = document.querySelector('.search-input');
+            const searchBtn = document.querySelector('.search-btn');
+            
+            if (searchBtn && searchInput) {
+                searchBtn.addEventListener('click', () => {
+                    const searchTerm = searchInput.value.trim();
+                    if (searchTerm) {
+                        window.location.href = `products.html?search=${encodeURIComponent(searchTerm)}`;
+                    }
+                });
+                
+                searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        const searchTerm = searchInput.value.trim();
+                        if (searchTerm) {
+                            window.location.href = `products.html?search=${encodeURIComponent(searchTerm)}`;
+                        }
+                    }
+                });
+            }
+            
+            // Newsletter form
+            const newsletterForm = document.querySelector('.newsletter-form');
+            if (newsletterForm) {
+                newsletterForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const email = newsletterForm.querySelector('input[type="email"]').value;
+                    showNotification(`تم اشتراكك بنجاح باستخدام البريد الإلكتروني: ${email}`);
+                    newsletterForm.reset();
+                });
+            }
+        });
+    </script>
     
     <!-- Page Specific JavaScript -->
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-    // Helper function to convert ArrayBuffer to Base64
-    function arrayBufferToBase64(buffer) {
-        let binary = '';
-        const bytes = new Uint8Array(buffer);
-        const len = bytes.byteLength;
-        for (let i = 0; i < len; i++) {
-            binary += String.fromCharCode(bytes[i]);
-        }
-        return window.btoa(binary);
-    }
-    // Get product ID from URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const productId = urlParams.get('id');
-    
-    if (!productId) {
-        window.location.href = 'products.html';
-        return;
-    }
-    
-    // Load product details
-    async function loadProductDetails() {
-        try {
-            const product = await apiRequest(`/products/${productId}`);
-            
-            // Update product info
-            document.getElementById('productName').textContent = product.name;
-            document.getElementById('productPrice').innerHTML = `<span class="current-price">${formatPrice(product.price)}</span>`;
-            document.getElementById('productDescription').textContent = product.description || 'لا يوجد وصف متاح';
-            document.getElementById('productCategory').textContent = product.categoryName;
-            document.getElementById('productCode').textContent = `#${product.id}`;
-            document.getElementById('productDate').textContent = formatDate(product.createdAt);
-            document.getElementById('breadcrumbCategory').textContent = product.categoryName;
-            
-            // Update stock status
-            const stockElement = document.getElementById('productStock');
-            if (product.stockQuantity > 0) {
-                stockElement.innerHTML = `<span class="in-stock"><i class="bi bi-check-circle"></i> متوفر (${product.stockQuantity} قطعة)</span>`;
-                document.getElementById('addToCartBtn').disabled = false;
-            } else {
-                stockElement.innerHTML = `<span class="out-of-stock"><i class="bi bi-x-circle"></i> غير متوفر</span>`;
-                document.getElementById('addToCartBtn').disabled = true;
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Helper function to convert ArrayBuffer to Base64
+            function arrayBufferToBase64(buffer) {
+                let binary = '';
+                const bytes = new Uint8Array(buffer);
+                const len = bytes.byteLength;
+                for (let i = 0; i < len; i++) {
+                    binary += String.fromCharCode(bytes[i]);
+                }
+                return window.btoa(binary);
             }
             
-            // Update availability
-            document.getElementById('productAvailability').textContent = product.status === 'Active' ? 'متوفر' : 'غير متوفر';
+            // Get product ID from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id');
             
-            // Update description tab
-            document.getElementById('descriptionContent').innerHTML = product.description || 'لا يوجد وصف متاح';
-            
-            // Update specifications
-            const specificationsTable = document.getElementById('specificationsTable');
-            specificationsTable.innerHTML = `
-                <tr>
-                    <th>الاسم</th>
-                    <td>${product.name}</td>
-                </tr>
-                <tr>
-                    <th>القسم</th>
-                    <td>${product.categoryName}</td>
-                </tr>
-                <tr>
-                    <th>السعر</th>
-                    <td>${formatPrice(product.price)}</td>
-                </tr>
-                <tr>
-                    <th>الحالة</th>
-                    <td>${product.status === 'Active' ? 'متوفر' : 'غير متوفر'}</td>
-                </tr>
-                <tr>
-                    <th>تاريخ الإضافة</th>
-                    <td>${formatDate(product.createdAt)}</td>
-                </tr>
-            `;
-            
-            // Load product images
-            loadProductImages(product.images);
-            
-            // Load product rating
-            loadProductRating(product);
-            
-            // Load related products
-            loadRelatedProducts(product.categoryId);
-            
-            // Update max quantity
-            document.getElementById('productQuantity').max = Math.min(product.stockQuantity, 10);
-            
-            // Check if product is in wishlist
-            checkWishlistStatus();
-        } catch (error) {
-            console.error('Error loading product details:', error);
-            document.querySelector('.product-detail-section').innerHTML = `
-                <div class="container">
-                    <div class="row justify-content-center">
-                        <div class="col-md-8 text-center py-5">
-                            <i class="bi bi-exclamation-triangle display-1 text-danger"></i>
-                            <h2 class="mt-3">المنتج غير موجود</h2>
-                            <p class="text-muted">لم يتم العثور على المنتج المطلوب. قد يكون قد تم حذفه أو غير متاح حالياً.</p>
-                            <a href="products.html" class="btn btn-primary">العودة إلى المنتجات</a>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-    }
-    
-    // Load product images with improved image handling
-    function loadProductImages(images) {
-        const mainImage = document.getElementById('mainProductImage');
-        const thumbnailsContainer = document.getElementById('productThumbnails');
-        
-        if (!images || images.length === 0) {
-            mainImage.src = 'https://via.placeholder.com/600x600?text=No+Image';
-            mainImage.onerror = function() {
-                this.src = 'https://via.placeholder.com/600x600?text=Image+Not+Available';
-            };
-            return;
-        }
-        
-        // Set main image
-        const primaryImage = images.find(img => img.isPrimary) || images[0];
-        const primaryImageUrl = getImageUrl(primaryImage);
-        mainImage.src = primaryImageUrl;
-        mainImage.onerror = function() {
-            this.src = 'https://via.placeholder.com/600x600?text=Image+Not+Available';
-        };
-        
-        // Create thumbnails
-        thumbnailsContainer.innerHTML = '';
-        images.forEach((image, index) => {
-            const imageUrl = getImageUrl(image);
-            const thumbnail = document.createElement('div');
-            thumbnail.className = `thumbnail ${index === 0 ? 'active' : ''}`;
-            thumbnail.innerHTML = `<img src="${imageUrl}" alt="Product Image ${index + 1}" onerror="this.src='https://via.placeholder.com/150x150?text=Error'">`;
-            
-            thumbnail.addEventListener('click', () => {
-                mainImage.src = imageUrl;
-                document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
-                thumbnail.classList.add('active');
-            });
-            
-            thumbnailsContainer.appendChild(thumbnail);
-        });
-    }
-    
-    // Helper function to get image URL with proper error handling
-    function getImageUrl(image) {
-        if (!image) return 'https://via.placeholder.com/600x600?text=No+Image';
-        
-        // If image has a URL property
-        if (image.url) return image.url;
-        
-        // If imageData is a base64 string
-        if (typeof image.imageData === 'string') {
-            return `data:${image.mimeType || 'image/jpeg'};base64,${image.imageData}`;
-        }
-        
-        // If imageData is binary
-        if (image.imageData) {
-            try {
-                const base64 = arrayBufferToBase64(image.imageData);
-                return `data:${image.mimeType || 'image/jpeg'};base64,${base64}`;
-            } catch (e) {
-                console.error('Error converting image to base64:', e);
-            }
-        }
-        
-        return 'https://via.placeholder.com/600x600?text=Invalid+Image';
-    }
-    
-    // Load product rating
-    function loadProductRating(product) {
-        const ratingElement = document.getElementById('productRating');
-        const averageRating = product.averageRating || 0;
-        const reviewCount = product.reviewCount || 0;
-        
-        ratingElement.innerHTML = `
-            <div class="stars">
-                ${renderRatingStars(averageRating)}
-            </div>
-            <span class="rating-text">${averageRating.toFixed(1)} (${reviewCount} تقييم)</span>
-        `;
-        
-        // Update review tab
-        document.getElementById('reviewCount').textContent = reviewCount;
-        document.getElementById('averageRating').textContent = averageRating.toFixed(1);
-        document.getElementById('averageRatingStars').innerHTML = renderRatingStars(averageRating);
-        document.getElementById('totalReviews').textContent = reviewCount;
-        
-        // Load rating breakdown
-        const ratingBreakdown = document.getElementById('ratingBreakdown');
-        ratingBreakdown.innerHTML = '';
-        
-        for (let i = 5; i >= 1; i--) {
-            const percentage = Math.min(100, (Math.random() * 100)); // Simulated data
-            ratingBreakdown.innerHTML += `
-                <div class="rating-bar">
-                    <span class="rating-label">${i} نجوم</span>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width: ${percentage}%"></div>
-                    </div>
-                    <span class="rating-percentage">${Math.round(percentage)}%</span>
-                </div>
-            `;
-        }
-        
-        // Load reviews
-        loadProductReviews(productId);
-    }
-    
-    // Render rating stars
-    function renderRatingStars(rating) {
-        let stars = '';
-        const fullStars = Math.floor(rating);
-        const hasHalfStar = rating % 1 >= 0.5;
-        
-        for (let i = 1; i <= 5; i++) {
-            if (i <= fullStars) {
-                stars += '<i class="bi bi-star-fill"></i>';
-            } else if (i === fullStars + 1 && hasHalfStar) {
-                stars += '<i class="bi bi-star-half"></i>';
-            } else {
-                stars += '<i class="bi bi-star"></i>';
-            }
-        }
-        
-        return stars;
-    }
-    
-    // Load product reviews
-    async function loadProductReviews(productId) {
-        try {
-            const reviews = await apiRequest(`/reviews/product/${productId}`);
-            const reviewsList = document.getElementById('reviewsList');
-            
-            if (reviews.length === 0) {
-                reviewsList.innerHTML = '<p class="text-center text-muted">لا توجد تقييمات بعد. كن أول من يقيم هذا المنتج!</p>';
+            if (!productId) {
+                window.location.href = 'products.html';
                 return;
             }
             
-            reviewsList.innerHTML = '';
-            reviews.forEach(review => {
-                const reviewElement = document.createElement('div');
-                reviewElement.className = 'review-item';
-                reviewElement.innerHTML = `
-                    <div class="review-header">
-                        <div class="reviewer-info">
-                            <div class="reviewer-name">${review.userName}</div>
-                            <div class="review-date">${formatDate(review.createdDate)}</div>
+            // Load product details
+            async function loadProductDetails() {
+                try {
+                    const product = await apiRequest(`/products/${productId}`);
+                    
+                    // Update product info
+                    document.getElementById('productName').textContent = product.name;
+                    document.getElementById('productDescription').textContent = product.description || 'لا يوجد وصف متاح';
+                    document.getElementById('productCategory').textContent = product.categoryName;
+                    document.getElementById('productCode').textContent = `#${product.id}`;
+                    document.getElementById('productDate').textContent = formatDate(product.createdAt);
+                    document.getElementById('breadcrumbCategory').textContent = product.categoryName;
+                    
+                    // Update price with discount support
+                    const priceElement = document.getElementById('productPrice');
+                    const discountBadge = document.getElementById('discountBadge');
+                    
+                    if (product.discountedPrice && product.discountedPrice < product.price) {
+                        const discountPercentage = Math.round((1 - product.discountedPrice / product.price) * 100);
+                        priceElement.innerHTML = `
+                            <span class="current-price">${formatPrice(product.discountedPrice)}</span>
+                            <span class="original-price">${formatPrice(product.price)}</span>
+                            <span class="discount-percentage">(${discountPercentage}% خصم)</span>
+                        `;
+                        discountBadge.textContent = `${discountPercentage}% خصم`;
+                        discountBadge.style.display = 'block';
+                    } else {
+                        priceElement.innerHTML = `<span class="current-price">${formatPrice(product.price)}</span>`;
+                        discountBadge.style.display = 'none';
+                    }
+                    
+                    // Update stock status
+                    const stockElement = document.getElementById('productStock');
+                    if (product.stockQuantity > 0) {
+                        stockElement.innerHTML = `<span class="in-stock"><i class="bi bi-check-circle"></i> متوفر (${product.stockQuantity} قطعة)</span>`;
+                        document.getElementById('addToCartBtn').disabled = false;
+                    } else {
+                        stockElement.innerHTML = `<span class="out-of-stock"><i class="bi bi-x-circle"></i> غير متوفر</span>`;
+                        document.getElementById('addToCartBtn').disabled = true;
+                    }
+                    
+                    // Update availability
+                    document.getElementById('productAvailability').textContent = product.status === 'Active' ? 'متوفر' : 'غير متوفر';
+                    
+                    // Update description tab
+                    document.getElementById('descriptionContent').innerHTML = product.description || 'لا يوجد وصف متاح';
+                    
+                    // Update specifications
+                    const specificationsTable = document.getElementById('specificationsTable');
+                    specificationsTable.innerHTML = `
+                        <tr>
+                            <th>الاسم</th>
+                            <td>${product.name}</td>
+                        </tr>
+                        <tr>
+                            <th>القسم</th>
+                            <td>${product.categoryName}</td>
+                        </tr>
+                        <tr>
+                            <th>السعر</th>
+                            <td>${formatPrice(product.price)}</td>
+                        </tr>
+                        ${product.discountedPrice && product.discountedPrice < product.price ? 
+                            `<tr>
+                                <th>السعر بعد الخصم</th>
+                                <td>${formatPrice(product.discountedPrice)}</td>
+                            </tr>` : ''
+                        }
+                        <tr>
+                            <th>الحالة</th>
+                            <td>${product.status === 'Active' ? 'متوفر' : 'غير متوفر'}</td>
+                        </tr>
+                        <tr>
+                            <th>تاريخ الإضافة</th>
+                            <td>${formatDate(product.createdAt)}</td>
+                        </tr>
+                    `;
+                    
+                    // Load product images
+                    loadProductImages(product.images);
+                    
+                    // Load product rating
+                    loadProductRating(product);
+                    
+                    // Load related products
+                    loadRelatedProducts(product.categoryId);
+                    
+                    // Update max quantity
+                    document.getElementById('productQuantity').max = Math.min(product.stockQuantity, 10);
+                    
+                    // Check if product is in wishlist
+                    checkWishlistStatus();
+                } catch (error) {
+                    console.error('Error loading product details:', error);
+                    document.querySelector('.product-detail-section').innerHTML = `
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-md-8 text-center py-5">
+                                    <i class="bi bi-exclamation-triangle display-1 text-danger"></i>
+                                    <h2 class="mt-3">المنتج غير موجود</h2>
+                                    <p class="text-muted">لم يتم العثور على المنتج المطلوب. قد يكون قد تم حذفه أو غير متاح حالياً.</p>
+                                    <a href="products.html" class="btn btn-primary">العودة إلى المنتجات</a>
+                                </div>
+                            </div>
                         </div>
-                        <div class="review-rating">
-                            ${renderRatingStars(review.rating)}
-                        </div>
+                    `;
+                }
+            }
+            
+            // Load product images with improved image handling
+            function loadProductImages(images) {
+                const mainImage = document.getElementById('mainProductImage');
+                const thumbnailsContainer = document.getElementById('productThumbnails');
+                
+                if (!images || images.length === 0) {
+                    mainImage.src = 'https://via.placeholder.com/600x600?text=No+Image';
+                    mainImage.onerror = function() {
+                        this.src = 'https://via.placeholder.com/600x600?text=Image+Not+Available';
+                    };
+                    return;
+                }
+                
+                // Set main image
+                const primaryImage = images.find(img => img.isPrimary) || images[0];
+                const primaryImageUrl = getImageUrl(primaryImage);
+                mainImage.src = primaryImageUrl;
+                mainImage.onerror = function() {
+                    this.src = 'https://via.placeholder.com/600x600?text=Image+Not+Available';
+                };
+                
+                // Create thumbnails
+                thumbnailsContainer.innerHTML = '';
+                images.forEach((image, index) => {
+                    const imageUrl = getImageUrl(image);
+                    const thumbnail = document.createElement('div');
+                    thumbnail.className = `thumbnail ${index === 0 ? 'active' : ''}`;
+                    thumbnail.innerHTML = `<img src="${imageUrl}" alt="Product Image ${index + 1}" onerror="this.src='https://via.placeholder.com/150x150?text=Error'">`;
+                    
+                    thumbnail.addEventListener('click', () => {
+                        mainImage.src = imageUrl;
+                        document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
+                        thumbnail.classList.add('active');
+                    });
+                    
+                    thumbnailsContainer.appendChild(thumbnail);
+                });
+            }
+            
+            // Helper function to get image URL with proper error handling
+            function getImageUrl(image) {
+                if (!image) return 'https://via.placeholder.com/600x600?text=No+Image';
+                
+                // If image has a URL property
+                if (image.url) return image.url;
+                
+                // If imageData is a base64 string
+                if (typeof image.imageData === 'string') {
+                    return `data:${image.mimeType || 'image/jpeg'};base64,${image.imageData}`;
+                }
+                
+                // If imageData is binary
+                if (image.imageData) {
+                    try {
+                        const base64 = arrayBufferToBase64(image.imageData);
+                        return `data:${image.mimeType || 'image/jpeg'};base64,${base64}`;
+                    } catch (e) {
+                        console.error('Error converting image to base64:', e);
+                    }
+                }
+                
+                return 'https://via.placeholder.com/600x600?text=Invalid+Image';
+            }
+            
+            // Load product rating
+            function loadProductRating(product) {
+                const ratingElement = document.getElementById('productRating');
+                const averageRating = product.averageRating || 0;
+                const reviewCount = product.reviewCount || 0;
+                
+                ratingElement.innerHTML = `
+                    <div class="stars">
+                        ${renderRatingStars(averageRating)}
                     </div>
-                    <div class="review-body">
-                        <p>${review.comment || 'لا يوجد تعليق'}</p>
+                    <span class="rating-text">${averageRating.toFixed(1)} (${reviewCount} تقييم)</span>
+                `;
+                
+                // Update review tab
+                document.getElementById('reviewCount').textContent = reviewCount;
+                document.getElementById('averageRating').textContent = averageRating.toFixed(1);
+                document.getElementById('averageRatingStars').innerHTML = renderRatingStars(averageRating);
+                document.getElementById('totalReviews').textContent = reviewCount;
+                
+                // Load rating breakdown
+                const ratingBreakdown = document.getElementById('ratingBreakdown');
+                ratingBreakdown.innerHTML = '';
+                
+                for (let i = 5; i >= 1; i--) {
+                    const percentage = Math.min(100, (Math.random() * 100)); // Simulated data
+                    ratingBreakdown.innerHTML += `
+                        <div class="rating-bar">
+                            <span class="rating-label">${i} نجوم</span>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" style="width: ${percentage}%"></div>
+                            </div>
+                            <span class="rating-percentage">${Math.round(percentage)}%</span>
+                        </div>
+                    `;
+                }
+                
+                // Load reviews
+                loadProductReviews(productId);
+            }
+            
+            // Render rating stars
+            function renderRatingStars(rating) {
+                let stars = '';
+                const fullStars = Math.floor(rating);
+                const hasHalfStar = rating % 1 >= 0.5;
+                
+                for (let i = 1; i <= 5; i++) {
+                    if (i <= fullStars) {
+                        stars += '<i class="bi bi-star-fill"></i>';
+                    } else if (i === fullStars + 1 && hasHalfStar) {
+                        stars += '<i class="bi bi-star-half"></i>';
+                    } else {
+                        stars += '<i class="bi bi-star"></i>';
+                    }
+                }
+                
+                return stars;
+            }
+            
+            // Load product reviews
+            async function loadProductReviews(productId) {
+                try {
+                    const reviews = await apiRequest(`/reviews/product/${productId}`);
+                    const reviewsList = document.getElementById('reviewsList');
+                    
+                    if (reviews.length === 0) {
+                        reviewsList.innerHTML = '<p class="text-center text-muted">لا توجد تقييمات بعد. كن أول من يقيم هذا المنتج!</p>';
+                        return;
+                    }
+                    
+                    reviewsList.innerHTML = '';
+                    reviews.forEach(review => {
+                        const reviewElement = document.createElement('div');
+                        reviewElement.className = 'review-item';
+                        reviewElement.innerHTML = `
+                            <div class="review-header">
+                                <div class="reviewer-info">
+                                    <div class="reviewer-name">${review.userName}</div>
+                                    <div class="review-date">${formatDate(review.createdDate)}</div>
+                                </div>
+                                <div class="review-rating">
+                                    ${renderRatingStars(review.rating)}
+                                </div>
+                            </div>
+                            <div class="review-body">
+                                <p>${review.comment || 'لا يوجد تعليق'}</p>
+                            </div>
+                        `;
+                        reviewsList.appendChild(reviewElement);
+                    });
+                } catch (error) {
+                    console.error('Error loading reviews:', error);
+                    document.getElementById('reviewsList').innerHTML = '<p class="text-center text-muted">حدث خطأ أثناء تحميل التقييمات.</p>';
+                }
+            }
+            
+            // Load related products with improved image handling and discount support
+            async function loadRelatedProducts(categoryId) {
+                try {
+                    const products = await apiRequest(`/products/category/${categoryId}`);
+                    const relatedProductsContainer = document.getElementById('relatedProducts');
+                    
+                    // Shuffle products and take 4
+                    const shuffled = [...products].sort(() => 0.5 - Math.random());
+                    const selected = shuffled.slice(0, 4);
+                    
+                    relatedProductsContainer.innerHTML = '';
+                    selected.forEach((product, index) => {
+                        const productCard = createRelatedProductCard(product);
+                        productCard.setAttribute('data-aos', 'fade-up');
+                        productCard.setAttribute('data-aos-delay', (index * 100).toString());
+                        relatedProductsContainer.appendChild(productCard);
+                    });
+                    
+                    // Refresh AOS
+                    AOS.refresh();
+                } catch (error) {
+                    console.error('Error loading related products:', error);
+                    document.getElementById('relatedProducts').innerHTML = '<p class="text-center text-muted">حدث خطأ أثناء تحميل المنتجات ذات الصلة.</p>';
+                }
+            }
+            
+            // Create related product card with improved image handling and discount support
+            function createRelatedProductCard(product) {
+                const col = document.createElement('div');
+                col.className = 'col-md-6 col-lg-3 mb-4';
+                
+                function getRelatedProductImageUrl(image) {
+                    if (!image) return 'https://via.placeholder.com/300x300?text=No+Image';
+                    
+                    // If image has a URL property
+                    if (image.url) return image.url;
+                    
+                    // If imageData is a base64 string
+                    if (typeof image.imageData === 'string') {
+                        return `data:${image.mimeType || 'image/jpeg'};base64,${image.imageData}`;
+                    }
+                    
+                    // If imageData is binary
+                    if (image.imageData) {
+                        try {
+                            const base64 = arrayBufferToBase64(image.imageData);
+                            return `data:${image.mimeType || 'image/jpeg'};base64,${base64}`;
+                        } catch (e) {
+                            console.error('Error converting image to base64:', e);
+                        }
+                    }
+                    
+                    return 'https://via.placeholder.com/300x300?text=Invalid+Image';
+                }
+                
+                const primaryImage = product.images && product.images.length > 0 
+                    ? product.images.find(img => img.isPrimary) || product.images[0]
+                    : null;
+                
+                const imageUrl = getRelatedProductImageUrl(primaryImage);
+                
+                // Calculate discount percentage if there's a discounted price
+                let discountPercentage = 0;
+                let displayPrice = formatPrice(product.price);
+                let originalPriceHtml = '';
+                
+                if (product.discountedPrice && product.discountedPrice < product.price) {
+                    discountPercentage = Math.round((1 - product.discountedPrice / product.price) * 100);
+                    displayPrice = formatPrice(product.discountedPrice);
+                    originalPriceHtml = `<span class="original-price">${formatPrice(product.price)}</span>`;
+                }
+                
+                col.innerHTML = `
+                    <div class="card product-card h-100">
+                        <div class="product-img-container">
+                            <img src="${imageUrl}" class="card-img-top" alt="${product.name}" 
+                                 onerror="this.src='https://via.placeholder.com/300x300?text=Image+Not+Available'">
+                            ${discountPercentage > 0 ? `<div class="discount-badge-small">${discountPercentage}% خصم</div>` : ''}
+                            <div class="product-actions">
+                                <button class="btn btn-sm btn-light add-to-wishlist" data-product-id="${product.id}">
+                                    <i class="bi bi-heart"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="product-title">${product.name}</h5>
+                            <div class="product-price">
+                                <span class="text-danger">${displayPrice}</span>
+                                ${originalPriceHtml}
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent border-top-0">
+                            <a href="product-detail.html?id=${product.id}" class="btn btn-outline-primary w-100">عرض التفاصيل</a>
+                        </div>
                     </div>
                 `;
-                reviewsList.appendChild(reviewElement);
-            });
-        } catch (error) {
-            console.error('Error loading reviews:', error);
-            document.getElementById('reviewsList').innerHTML = '<p class="text-center text-muted">حدث خطأ أثناء تحميل التقييمات.</p>';
-        }
-    }
-    
-    // Load related products with improved image handling
-    async function loadRelatedProducts(categoryId) {
-        try {
-            const products = await apiRequest(`/products/category/${categoryId}`);
-            const relatedProductsContainer = document.getElementById('relatedProducts');
-            
-            // Shuffle products and take 4
-            const shuffled = [...products].sort(() => 0.5 - Math.random());
-            const selected = shuffled.slice(0, 4);
-            
-            relatedProductsContainer.innerHTML = '';
-            selected.forEach((product, index) => {
-                const productCard = createRelatedProductCard(product);
-                productCard.setAttribute('data-aos', 'fade-up');
-                productCard.setAttribute('data-aos-delay', (index * 100).toString());
-                relatedProductsContainer.appendChild(productCard);
-            });
-            
-            // Refresh AOS
-            AOS.refresh();
-        } catch (error) {
-            console.error('Error loading related products:', error);
-            document.getElementById('relatedProducts').innerHTML = '<p class="text-center text-muted">حدث خطأ أثناء تحميل المنتجات ذات الصلة.</p>';
-        }
-    }
-    
-    // Create related product card with improved image handling
-    function createRelatedProductCard(product) {
-        const col = document.createElement('div');
-        col.className = 'col-md-6 col-lg-3 mb-4';
-        
-        function getRelatedProductImageUrl(image) {
-            if (!image) return 'https://via.placeholder.com/300x300?text=No+Image';
-            
-            // If image has a URL property
-            if (image.url) return image.url;
-            
-            // If imageData is a base64 string
-            if (typeof image.imageData === 'string') {
-                return `data:${image.mimeType || 'image/jpeg'};base64,${image.imageData}`;
+                
+                // Add event listener for wishlist
+                const addToWishlistBtn = col.querySelector('.add-to-wishlist');
+                if (addToWishlistBtn) {
+                    addToWishlistBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        addToWishlist(product.id);
+                    });
+                }
+                
+                return col;
             }
             
-            // If imageData is binary
-            if (image.imageData) {
+            // Check if product is in wishlist
+            async function checkWishlistStatus() {
+                const token = localStorage.getItem('token');
+                
+                if (!token) return;
+                
                 try {
-                    const base64 = arrayBufferToBase64(image.imageData);
-                    return `data:${image.mimeType || 'image/jpeg'};base64,${base64}`;
-                } catch (e) {
-                    console.error('Error converting image to base64:', e);
+                    const isInWishlist = await apiRequest(`/wishlist/products/${productId}/exists`);
+                    
+                    if (isInWishlist.exists) {
+                        document.getElementById('addToWishlistBtn').innerHTML = '<i class="bi bi-heart-fill"></i> تمت الإضافة إلى المفضلة';
+                        document.getElementById('addToWishlistBtn').classList.add('btn-danger');
+                        document.getElementById('addToWishlistBtn').classList.remove('btn-outline-danger');
+                    }
+                } catch (error) {
+                    console.error('Error checking wishlist status:', error);
                 }
             }
             
-            return 'https://via.placeholder.com/300x300?text=Invalid+Image';
-        }
-        
-        const primaryImage = product.images && product.images.length > 0 
-            ? product.images.find(img => img.isPrimary) || product.images[0]
-            : null;
-        
-        const imageUrl = getRelatedProductImageUrl(primaryImage);
-        
-        col.innerHTML = `
-            <div class="card product-card h-100">
-                <div class="product-img-container">
-                    <img src="${imageUrl}" class="card-img-top" alt="${product.name}" 
-                         onerror="this.src='https://via.placeholder.com/300x300?text=Image+Not+Available'">
-                    <div class="product-actions">
-                        <button class="btn btn-sm btn-light add-to-wishlist" data-product-id="${product.id}">
-                            <i class="bi bi-heart"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <h5 class="product-title">${product.name}</h5>
-                    <div class="product-price">
-                        ${formatPrice(product.price)}
-                    </div>
-                </div>
-                <div class="card-footer bg-transparent border-top-0">
-                    <a href="product-detail.html?id=${product.id}" class="btn btn-outline-primary w-100">عرض التفاصيل</a>
-                </div>
-            </div>
-        `;
-        
-        // Add event listener for wishlist
-        const addToWishlistBtn = col.querySelector('.add-to-wishlist');
-        if (addToWishlistBtn) {
-            addToWishlistBtn.addEventListener('click', (e) => {
+            // Add to cart function
+            async function addToCart() {
+                const token = localStorage.getItem('token');
+                
+                if (!token) {
+                    showNotification('يجب تسجيل الدخول أولاً', 'warning');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 1000);
+                    return;
+                }
+                
+                const quantity = parseInt(document.getElementById('productQuantity').value);
+                
+                try {
+                    await apiRequest('/cart/items', {
+                        method: 'POST',
+                        body: JSON.stringify({ productId, quantity })
+                    });
+                    
+                    showNotification('تمت إضافة المنتج إلى السلة');
+                    updateCartCount();
+                } catch (error) {
+                    showNotification(error.message, 'danger');
+                }
+            }
+            
+            // Add to wishlist function
+            async function addToWishlist(productId) {
+                const token = localStorage.getItem('token');
+                
+                if (!token) {
+                    showNotification('يجب تسجيل الدخول أولاً', 'warning');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 1000);
+                    return;
+                }
+                
+                try {
+                    await apiRequest(`/wishlist/products/${productId}`, {
+                        method: 'POST'
+                    });
+                    
+                    showNotification('تمت إضافة المنتج إلى المفضلة');
+                    
+                    // Update button state
+                    const wishlistBtn = document.getElementById('addToWishlistBtn');
+                    wishlistBtn.innerHTML = '<i class="bi bi-heart-fill"></i> تمت الإضافة إلى المفضلة';
+                    wishlistBtn.classList.add('btn-danger');
+                    wishlistBtn.classList.remove('btn-outline-danger');
+                } catch (error) {
+                    showNotification(error.message, 'danger');
+                }
+            }
+            
+            // Add review function
+            async function addReview(rating, comment) {
+                const token = localStorage.getItem('token');
+                
+                if (!token) {
+                    showNotification('يجب تسجيل الدخول أولاً', 'warning');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 1000);
+                    return;
+                }
+                
+                try {
+                    await apiRequest(`/reviews/product/${productId}`, {
+                        method: 'POST',
+                        body: JSON.stringify({ rating, comment })
+                    });
+                    
+                    showNotification('تم إضافة تقييمك بنجاح');
+                    
+                    // Reload product details and reviews
+                    loadProductDetails();
+                    
+                    // Reset form
+                    document.getElementById('addReviewForm').reset();
+                    document.querySelectorAll('.star-label').forEach(label => {
+                        label.classList.remove('active');
+                    });
+                } catch (error) {
+                    showNotification(error.message, 'danger');
+                }
+            }
+            
+            // Event listeners
+            document.getElementById('decreaseQuantity').addEventListener('click', () => {
+                const quantityInput = document.getElementById('productQuantity');
+                const currentValue = parseInt(quantityInput.value);
+                if (currentValue > 1) {
+                    quantityInput.value = currentValue - 1;
+                }
+            });
+            
+            document.getElementById('increaseQuantity').addEventListener('click', () => {
+                const quantityInput = document.getElementById('productQuantity');
+                const currentValue = parseInt(quantityInput.value);
+                const maxValue = parseInt(quantityInput.max);
+                if (currentValue < maxValue) {
+                    quantityInput.value = currentValue + 1;
+                }
+            });
+            
+            document.getElementById('addToCartBtn').addEventListener('click', addToCart);
+            document.getElementById('addToWishlistBtn').addEventListener('click', () => addToWishlist(productId));
+            
+            // Review form submission
+            document.getElementById('addReviewForm').addEventListener('submit', (e) => {
                 e.preventDefault();
-                addToWishlist(product.id);
-            });
-        }
-        
-        return col;
-    }
-    
-    // Check if product is in wishlist
-    async function checkWishlistStatus() {
-        const token = localStorage.getItem('token');
-        
-        if (!token) return;
-        
-        try {
-            const isInWishlist = await apiRequest(`/wishlist/products/${productId}/exists`);
-            
-            if (isInWishlist.exists) {
-                document.getElementById('addToWishlistBtn').innerHTML = '<i class="bi bi-heart-fill"></i> تمت الإضافة إلى المفضلة';
-                document.getElementById('addToWishlistBtn').classList.add('btn-danger');
-                document.getElementById('addToWishlistBtn').classList.remove('btn-outline-danger');
-            }
-        } catch (error) {
-            console.error('Error checking wishlist status:', error);
-        }
-    }
-    
-    // Add to cart function
-    async function addToCart() {
-        const token = localStorage.getItem('token');
-        
-        if (!token) {
-            showNotification('يجب تسجيل الدخول أولاً', 'warning');
-            setTimeout(() => {
-                window.location.href = 'login.html';
-            }, 1000);
-            return;
-        }
-        
-        const quantity = parseInt(document.getElementById('productQuantity').value);
-        
-        try {
-            await apiRequest('/cart/items', {
-                method: 'POST',
-                body: JSON.stringify({ productId, quantity })
-            });
-            
-            showNotification('تمت إضافة المنتج إلى السلة');
-            updateCartCount();
-        } catch (error) {
-            showNotification(error.message, 'danger');
-        }
-    }
-    
-    // Add to wishlist function
-    async function addToWishlist(productId) {
-        const token = localStorage.getItem('token');
-        
-        if (!token) {
-            showNotification('يجب تسجيل الدخول أولاً', 'warning');
-            setTimeout(() => {
-                window.location.href = 'login.html';
-            }, 1000);
-            return;
-        }
-        
-        try {
-            await apiRequest(`/wishlist/products/${productId}`, {
-                method: 'POST'
-            });
-            
-            showNotification('تمت إضافة المنتج إلى المفضلة');
-            
-            // Update button state
-            const wishlistBtn = document.getElementById('addToWishlistBtn');
-            wishlistBtn.innerHTML = '<i class="bi bi-heart-fill"></i> تمت الإضافة إلى المفضلة';
-            wishlistBtn.classList.add('btn-danger');
-            wishlistBtn.classList.remove('btn-outline-danger');
-        } catch (error) {
-            showNotification(error.message, 'danger');
-        }
-    }
-    
-    // Add review function
-    async function addReview(rating, comment) {
-        const token = localStorage.getItem('token');
-        
-        if (!token) {
-            showNotification('يجب تسجيل الدخول أولاً', 'warning');
-            setTimeout(() => {
-                window.location.href = 'login.html';
-            }, 1000);
-            return;
-        }
-        
-        try {
-            await apiRequest(`/reviews/product/${productId}`, {
-                method: 'POST',
-                body: JSON.stringify({ rating, comment })
-            });
-            
-            showNotification('تم إضافة تقييمك بنجاح');
-            
-            // Reload product details and reviews
-            loadProductDetails();
-            
-            // Reset form
-            document.getElementById('addReviewForm').reset();
-            document.querySelectorAll('.star-label').forEach(label => {
-                label.classList.remove('active');
-            });
-        } catch (error) {
-            showNotification(error.message, 'danger');
-        }
-    }
-    
-    // Event listeners
-    document.getElementById('decreaseQuantity').addEventListener('click', () => {
-        const quantityInput = document.getElementById('productQuantity');
-        const currentValue = parseInt(quantityInput.value);
-        if (currentValue > 1) {
-            quantityInput.value = currentValue - 1;
-        }
-    });
-    
-    document.getElementById('increaseQuantity').addEventListener('click', () => {
-        const quantityInput = document.getElementById('productQuantity');
-        const currentValue = parseInt(quantityInput.value);
-        const maxValue = parseInt(quantityInput.max);
-        if (currentValue < maxValue) {
-            quantityInput.value = currentValue + 1;
-        }
-    });
-    
-    document.getElementById('addToCartBtn').addEventListener('click', addToCart);
-    document.getElementById('addToWishlistBtn').addEventListener('click', () => addToWishlist(productId));
-    
-    // Review form submission
-    document.getElementById('addReviewForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        const selectedRating = document.querySelector('input[name="rating"]:checked');
-        if (!selectedRating) {
-            showNotification('يرجى اختيار تقييم', 'warning');
-            return;
-        }
-        
-        const rating = parseInt(selectedRating.value);
-        const comment = document.getElementById('reviewComment').value;
-        
-        addReview(rating, comment);
-    });
-    
-    // Star rating interaction
-    document.querySelectorAll('.star-label').forEach((label, index) => {
-        label.addEventListener('click', () => {
-            const rating = 5 - index;
-            document.getElementById(`star${rating}`).checked = true;
-            
-            // Update star appearance
-            document.querySelectorAll('.star-label').forEach((l, i) => {
-                if (i >= index) {
-                    l.classList.add('active');
-                } else {
-                    l.classList.remove('active');
+                
+                const selectedRating = document.querySelector('input[name="rating"]:checked');
+                if (!selectedRating) {
+                    showNotification('يرجى اختيار تقييم', 'warning');
+                    return;
                 }
+                
+                const rating = parseInt(selectedRating.value);
+                const comment = document.getElementById('reviewComment').value;
+                
+                addReview(rating, comment);
             });
-        });
-        
-        label.addEventListener('mouseenter', () => {
-            document.querySelectorAll('.star-label').forEach((l, i) => {
-                if (i >= index) {
-                    l.classList.add('hover');
-                } else {
+            
+            // Star rating interaction
+            document.querySelectorAll('.star-label').forEach((label, index) => {
+                label.addEventListener('click', () => {
+                    const rating = 5 - index;
+                    document.getElementById(`star${rating}`).checked = true;
+                    
+                    // Update star appearance
+                    document.querySelectorAll('.star-label').forEach((l, i) => {
+                        if (i >= index) {
+                            l.classList.add('active');
+                        } else {
+                            l.classList.remove('active');
+                        }
+                    });
+                });
+                
+                label.addEventListener('mouseenter', () => {
+                    document.querySelectorAll('.star-label').forEach((l, i) => {
+                        if (i >= index) {
+                            l.classList.add('hover');
+                        } else {
+                            l.classList.remove('hover');
+                        }
+                    });
+                });
+            });
+            
+            document.querySelector('.rating-input').addEventListener('mouseleave', () => {
+                document.querySelectorAll('.star-label').forEach(l => {
                     l.classList.remove('hover');
-                }
+                });
             });
+            
+            // Initialize
+            loadProductDetails();
         });
-    });
-    
-    document.querySelector('.rating-input').addEventListener('mouseleave', () => {
-        document.querySelectorAll('.star-label').forEach(l => {
-            l.classList.remove('hover');
-        });
-    });
-    
-    // Initialize
-    loadProductDetails();
-});
-</script>
+    </script>
 </body>
 </html>

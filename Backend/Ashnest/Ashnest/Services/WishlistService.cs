@@ -14,24 +14,63 @@ namespace Ashnest.Services
             _context = context;
         }
 
+        // In Ashnest/Services/WishlistService.cs
+
         public async Task<WishlistDto> GetWishlistAsync(int userId)
         {
             var wishlistItems = await _context.Wishlists
                 .Include(w => w.Product)
-                .ThenInclude(p => p.ProductImages.Where(pi => pi.IsPrimary))
+                    .ThenInclude(p => p.Discounts) // Include product discounts
+                .Include(w => w.Product)
+                    .ThenInclude(p => p.Category)
+                        .ThenInclude(c => c.Discounts) // Include category discounts
+                .Include(w => w.Product)
+                    .ThenInclude(p => p.ProductImages.Where(pi => pi.IsPrimary))
                 .Where(w => w.UserId == userId)
                 .OrderByDescending(w => w.CreatedDate)
                 .ToListAsync();
 
-            var items = wishlistItems.Select(w => new WishlistItemDto
-            {
-                Id = w.Id,
-                ProductId = w.ProductId,
-                ProductName = w.Product.Name,
-                ProductPrice = w.Product.Price,
-                PrimaryImage = w.Product.ProductImages?.FirstOrDefault()?.ImageData,
-                ImageMimeType = w.Product.ProductImages?.FirstOrDefault()?.MimeType,
-                CreatedDate = w.CreatedDate
+            var items = wishlistItems.Select(w => {
+                // Get current UTC date
+                var now = DateTime.UtcNow;
+
+                // Find active product-specific discount
+                var productDiscount = w.Product.Discounts?
+                    .FirstOrDefault(d => d.IsActive &&
+                                       now >= d.StartDate &&
+                                       now <= d.EndDate);
+
+                // Find active category discount if no product discount
+                Discount categoryDiscount = null;
+                if (productDiscount == null && w.Product.Category?.Discounts != null)
+                {
+                    categoryDiscount = w.Product.Category.Discounts
+                        .FirstOrDefault(d => d.IsActive &&
+                                           now >= d.StartDate &&
+                                           now <= d.EndDate);
+                }
+
+                // Determine which discount to apply
+                Discount activeDiscount = productDiscount ?? categoryDiscount;
+
+                // Calculate discounted price
+                decimal? discountedPrice = null;
+                if (activeDiscount != null)
+                {
+                    discountedPrice = w.Product.Price * (1 - (activeDiscount.DiscountPercentage / 100));
+                }
+
+                return new WishlistItemDto
+                {
+                    Id = w.Id,
+                    ProductId = w.ProductId,
+                    ProductName = w.Product.Name,
+                    ProductPrice = w.Product.Price,
+                    DiscountedPrice = discountedPrice,
+                    PrimaryImage = w.Product.ProductImages?.FirstOrDefault()?.ImageData,
+                    ImageMimeType = w.Product.ProductImages?.FirstOrDefault()?.MimeType,
+                    CreatedDate = w.CreatedDate
+                };
             }).ToList();
 
             return new WishlistDto

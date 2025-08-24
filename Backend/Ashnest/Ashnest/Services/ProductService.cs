@@ -20,6 +20,8 @@ namespace Ashnest.Services
         {
             var query = _context.Products
                 .Include(p => p.Category)
+                    .ThenInclude(c => c.Discounts) // Include category discounts
+                .Include(p => p.Discounts) // Include product discounts
                 .Include(p => p.ProductImages)
                 .Include(p => p.Reviews)
                 .AsQueryable();
@@ -43,10 +45,14 @@ namespace Ashnest.Services
             return products.Select(p => MapToDto(p)).ToList();
         }
 
+
+
         public async Task<ProductDto> GetProductByIdAsync(int id)
         {
             var product = await _context.Products
                 .Include(p => p.Category)
+                    .ThenInclude(c => c.Discounts) // Include category discounts
+                .Include(p => p.Discounts) // Include product discounts
                 .Include(p => p.ProductImages)
                 .Include(p => p.Reviews)
                 .FirstOrDefaultAsync(p => p.Id == id);
@@ -58,6 +64,7 @@ namespace Ashnest.Services
 
             return MapToDto(product);
         }
+
 
         // In Ashnest/Services/ProductService.cs
         public async Task<ProductDto> CreateProductAsync(CreateProductRequest request)
@@ -153,69 +160,99 @@ namespace Ashnest.Services
             product.UpdatedAt = DateTime.UtcNow;
             _context.Products.Update(product);
 
+            // Get all product images for this product
+            var existingImages = await _context.ProductImages
+                .Where(pi => pi.ProductId == id)
+                .ToListAsync();
+
             // Process image updates
             if (request.ImageUpdates != null && request.ImageUpdates.Any())
             {
-                foreach (var update in request.ImageUpdates)
+                // Get IDs of images to remove
+                var imageIdsToRemove = request.ImageUpdates
+                    .Where(u => u.Remove)
+                    .Select(u => u.Id)
+                    .ToList();
+
+                // Remove images marked for removal
+                foreach (var imageId in imageIdsToRemove)
                 {
-                    var image = await _context.ProductImages.FindAsync(update.Id);
-                    if (image != null && image.ProductId == id)
+                    var image = existingImages.FirstOrDefault(img => img.Id == imageId);
+                    if (image != null)
                     {
-                        if (update.Remove)
-                        {
-                            _context.ProductImages.Remove(image);
-                        }
-                        else
-                        {
-                            // Update primary status
-                            image.IsPrimary = update.IsPrimary;
-                            _context.ProductImages.Update(image);
-                        }
+                        _context.ProductImages.Remove(image);
+                        existingImages.Remove(image);
                     }
+                }
+
+                // Get the ID of the image to set as primary
+                var primaryImageId = request.ImageUpdates
+                    .FirstOrDefault(u => !u.Remove && u.IsPrimary)?.Id;
+
+                // If a primary image is specified, set it
+                if (primaryImageId.HasValue)
+                {
+                    var primaryImage = existingImages.FirstOrDefault(img => img.Id == primaryImageId.Value);
+                    if (primaryImage != null)
+                    {
+                        // Set all images to not primary first
+                        foreach (var img in existingImages)
+                        {
+                            img.IsPrimary = false;
+                        }
+                        // Set the specified image as primary
+                        primaryImage.IsPrimary = true;
+                    }
+                }
+                else
+                {
+                    // If no primary image is specified, check if there's already a primary image
+                    if (!existingImages.Any(img => img.IsPrimary) && existingImages.Any())
+                    {
+                        // If not, set the first image as primary
+                        existingImages.First().IsPrimary = true;
+                    }
+                }
+
+                // Update all images
+                foreach (var image in existingImages)
+                {
+                    _context.ProductImages.Update(image);
                 }
             }
 
-            // Add new images - only if provided
-            // Add new images - only if provided and valid
-            if (request.NewImageFiles != null && request.NewImageFiles.Any(file => file != null && file.Length > 0))
+            // Add new images
+            if (request.NewImageFiles != null && request.NewImageFiles.Any())
             {
                 foreach (var imageFile in request.NewImageFiles)
                 {
-                    // Skip empty or invalid files
-                    if (imageFile == null || imageFile.Length == 0 || !_imageService.IsValidImage(imageFile))
+                    if (imageFile != null && imageFile.Length > 0)
                     {
-                        continue;
+                        var imageData = await _imageService.ConvertImageToByteArrayAsync(imageFile);
+                        var mimeType = _imageService.GetImageMimeType(imageFile.FileName);
+                        var productImage = new ProductImage
+                        {
+                            ProductId = id,
+                            ImageData = imageData,
+                            MimeType = mimeType,
+                            IsPrimary = false // Default to not primary
+                        };
+                        _context.ProductImages.Add(productImage);
+                        existingImages.Add(productImage);
                     }
-
-
-                    var imageData = await _imageService.ConvertImageToByteArrayAsync(imageFile);
-                    var mimeType = _imageService.GetImageMimeType(imageFile.FileName);
-                    var productImage = new ProductImage
-                    {
-                        ProductId = id,
-                        ImageData = imageData,
-                        MimeType = mimeType,
-                        IsPrimary = false // Default to not primary
-                    };
-                    _context.ProductImages.Add(productImage);
                 }
             }
 
             // Ensure there's always a primary image
-            var productImages = await _context.ProductImages
-                .Where(pi => pi.ProductId == id)
-                .ToListAsync();
-            if (productImages.Any() && !productImages.Any(pi => pi.IsPrimary))
+            if (existingImages.Any() && !existingImages.Any(pi => pi.IsPrimary))
             {
-                productImages.First().IsPrimary = true;
-                _context.ProductImages.Update(productImages.First());
+                existingImages.First().IsPrimary = true;
+                _context.ProductImages.Update(existingImages.First());
             }
 
             await _context.SaveChangesAsync();
             return await GetProductByIdAsync(id);
         }
-
-
 
 
 
@@ -271,11 +308,54 @@ namespace Ashnest.Services
             return products.Select(p => MapToDto(p)).ToList();
         }
 
+        // Ashnest/Services/ProductService.cs (update MapToDto method)
+        // Ashnest/Services/ProductService.cs (update MapToDto method)
         private ProductDto MapToDto(Product product)
         {
             var averageRating = product.Reviews?.Any() == true
                 ? product.Reviews.Average(r => r.Rating)
                 : 0;
+
+            // Get current UTC date
+            var now = DateTime.UtcNow;
+
+            // Find active product-specific discount
+            var productDiscount = product.Discounts?
+                .FirstOrDefault(d => d.IsActive &&
+                                   now >= d.StartDate &&
+                                   now <= d.EndDate);
+
+            // Find active category discount if no product discount
+            Discount categoryDiscount = null;
+            if (productDiscount == null && product.Category?.Discounts != null)
+            {
+                categoryDiscount = product.Category.Discounts
+                    .FirstOrDefault(d => d.IsActive &&
+                                       now >= d.StartDate &&
+                                       now <= d.EndDate);
+            }
+
+            // Determine which discount to apply
+            Discount activeDiscount = productDiscount ?? categoryDiscount;
+
+            // Calculate discounted price
+            decimal? discountedPrice = null;
+            DiscountDto discountDto = null;
+
+            if (activeDiscount != null)
+            {
+                discountedPrice = product.Price * (1 - (activeDiscount.DiscountPercentage / 100));
+                discountDto = new DiscountDto
+                {
+                    Id = activeDiscount.Id,
+                    Name = activeDiscount.Name,
+                    Description = activeDiscount.Description,
+                    DiscountPercentage = activeDiscount.DiscountPercentage,
+                    StartDate = activeDiscount.StartDate,
+                    EndDate = activeDiscount.EndDate,
+                    IsActive = activeDiscount.IsActive
+                };
+            }
 
             return new ProductDto
             {
@@ -283,6 +363,8 @@ namespace Ashnest.Services
                 Name = product.Name,
                 Description = product.Description,
                 Price = product.Price,
+                DiscountedPrice = discountedPrice,
+                Discount = discountDto,
                 StockQuantity = product.StockQuantity,
                 CategoryId = product.CategoryId,
                 CategoryName = product.Category?.Name,

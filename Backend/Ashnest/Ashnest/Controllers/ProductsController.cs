@@ -2,6 +2,7 @@
 using Ashnest.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace Ashnest.Controllers
 {
@@ -81,6 +82,17 @@ namespace Ashnest.Controllers
         {
             try
             {
+                // Parse ImageUpdates from JSON string if needed
+                if (Request.Form.TryGetValue("ImageUpdates", out var imageUpdatesValue))
+                {
+                    var imageUpdatesJson = imageUpdatesValue.ToString();
+                    if (!string.IsNullOrEmpty(imageUpdatesJson))
+                    {
+                        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                        request.ImageUpdates = JsonSerializer.Deserialize<List<ProductImageUpdate>>(imageUpdatesJson, options);
+                    }
+                }
+
                 var product = await _productService.UpdateProductAsync(id, request);
                 return Ok(product);
             }

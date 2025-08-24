@@ -1,4 +1,5 @@
-﻿using Ashnest.Data;
+﻿// Ashnest/Services/AdminService.cs
+using Ashnest.Data;
 using Ashnest.DTOs;
 using Ashnest.Models;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +9,6 @@ namespace Ashnest.Services
     public class AdminService : IAdminService
     {
         private readonly ApplicationDbContext _context;
-
         public AdminService(ApplicationDbContext context)
         {
             _context = context;
@@ -23,7 +23,7 @@ namespace Ashnest.Services
                 .Where(o => o.OrderDate >= startDate && o.OrderDate <= endDate && o.Status != OrderStatus.Cancelled)
                 .ToListAsync();
 
-            var totalRevenue = orders.Sum(o => o.OrderTotal - (o.DiscountAmount ?? 0));
+            var totalRevenue = orders.Sum(o => o.FinalAmount); // Use FinalAmount instead of OrderTotal - DiscountAmount
             var totalProductsSold = orders.Sum(o => o.OrderItems.Sum(oi => oi.Quantity));
 
             // Category sales
@@ -34,7 +34,7 @@ namespace Ashnest.Services
                 {
                     CategoryName = g.Key,
                     ItemsSold = g.Sum(oi => oi.Quantity),
-                    Revenue = g.Sum(oi => oi.Quantity * oi.UnitPrice)
+                    Revenue = g.Sum(oi => (oi.DiscountedUnitPrice ?? oi.UnitPrice) * oi.Quantity)
                 })
                 .ToList();
 
@@ -45,7 +45,7 @@ namespace Ashnest.Services
                 {
                     Date = g.Key,
                     Orders = g.Count(),
-                    Revenue = g.Sum(o => o.OrderTotal - (o.DiscountAmount ?? 0))
+                    Revenue = g.Sum(o => o.FinalAmount) // Use FinalAmount
                 })
                 .OrderBy(d => d.Date)
                 .ToList();
@@ -69,10 +69,8 @@ namespace Ashnest.Services
         public async Task<InventoryReportDto> GetInventoryReportAsync()
         {
             var products = await _context.Products.ToListAsync();
-
             var outOfStock = products.Count(p => p.StockQuantity == 0);
             var lowStock = products.Count(p => p.StockQuantity > 0 && p.StockQuantity <= 10);
-
             var lowStockItems = products
                 .Where(p => p.StockQuantity > 0 && p.StockQuantity <= 10)
                 .Select(p => new LowStockItemDto
@@ -100,7 +98,6 @@ namespace Ashnest.Services
 
             var thisMonth = DateTime.UtcNow.Month;
             var thisYear = DateTime.UtcNow.Year;
-
             var newCustomersThisMonth = customers
                 .Count(u => u.CreatedAt.Month == thisMonth && u.CreatedAt.Year == thisYear);
 
@@ -124,7 +121,7 @@ namespace Ashnest.Services
                     CustomerId = g.Key.UserId,
                     CustomerName = $"{g.Key.FirstName} {g.Key.LastName}",
                     OrdersCount = g.Count(),
-                    TotalSpent = g.Sum(o => o.OrderTotal - (o.DiscountAmount ?? 0))
+                    TotalSpent = g.Sum(o => o.FinalAmount) // Use FinalAmount instead of OrderTotal - DiscountAmount
                 })
                 .OrderByDescending(c => c.TotalSpent)
                 .Take(10)

@@ -18,8 +18,15 @@ namespace Ashnest.Services
         {
             var cart = await _context.Carts
                 .Include(c => c.CartItems)
-                .ThenInclude(ci => ci.Product)
-                .ThenInclude(p => p.ProductImages.Where(pi => pi.IsPrimary))
+                    .ThenInclude(ci => ci.Product)
+                        .ThenInclude(p => p.Discounts) // Include product discounts
+                .Include(c => c.CartItems)
+                    .ThenInclude(ci => ci.Product)
+                        .ThenInclude(p => p.Category)
+                            .ThenInclude(c => c.Discounts) // Include category discounts
+                .Include(c => c.CartItems)
+                    .ThenInclude(ci => ci.Product)
+                        .ThenInclude(p => p.ProductImages.Where(pi => pi.IsPrimary))
                 .FirstOrDefaultAsync(c => c.UserId == userId);
 
             if (cart == null)
@@ -28,7 +35,6 @@ namespace Ashnest.Services
                 cart = new Cart { UserId = userId };
                 _context.Carts.Add(cart);
                 await _context.SaveChangesAsync();
-
                 return new CartDto
                 {
                     Id = cart.Id,
@@ -41,6 +47,7 @@ namespace Ashnest.Services
 
             return MapToDto(cart);
         }
+
 
         public async Task<CartDto> AddToCartAsync(int userId, AddToCartRequest request)
         {
@@ -159,18 +166,73 @@ namespace Ashnest.Services
             return true;
         }
 
+        // Ashnest/Services/CartService.cs (update MapToDto method)
+        // Ashnest/Services/CartService.cs (update MapToDto method)
         private CartDto MapToDto(Cart cart)
         {
-            var items = cart.CartItems.Select(ci => new CartItemDto
+            var items = cart.CartItems.Select(ci =>
             {
-                Id = ci.Id,
-                ProductId = ci.ProductId,
-                ProductName = ci.Product.Name,
-                ProductPrice = ci.Product.Price,
-                Quantity = ci.Quantity,
-                TotalPrice = ci.Product.Price * ci.Quantity,
-                PrimaryImage = ci.Product.ProductImages?.FirstOrDefault()?.ImageData,
-                ImageMimeType = ci.Product.ProductImages?.FirstOrDefault()?.MimeType
+                decimal unitPrice = ci.Product.Price;
+                decimal? discountedPrice = null;
+                DiscountDto discountDto = null;
+
+                // Check for active product-specific discount
+                var productDiscount = ci.Product.Discounts?
+                    .FirstOrDefault(d => d.IsActive &&
+                                       DateTime.UtcNow >= d.StartDate &&
+                                       DateTime.UtcNow <= d.EndDate);
+
+                if (productDiscount != null)
+                {
+                    discountedPrice = ci.Product.Price * (1 - (productDiscount.DiscountPercentage / 100));
+                    unitPrice = discountedPrice.Value;
+                    discountDto = new DiscountDto
+                    {
+                        Id = productDiscount.Id,
+                        Name = productDiscount.Name,
+                        DiscountPercentage = productDiscount.DiscountPercentage,
+                        StartDate = productDiscount.StartDate,
+                        EndDate = productDiscount.EndDate,
+                        IsActive = productDiscount.IsActive
+                    };
+                }
+                // Check for active category discount if no product discount
+                else
+                {
+                    var categoryDiscount = ci.Product.Category?.Discounts?
+                        .FirstOrDefault(d => d.IsActive &&
+                                           DateTime.UtcNow >= d.StartDate &&
+                                           DateTime.UtcNow <= d.EndDate);
+
+                    if (categoryDiscount != null)
+                    {
+                        discountedPrice = ci.Product.Price * (1 - (categoryDiscount.DiscountPercentage / 100));
+                        unitPrice = discountedPrice.Value;
+                        discountDto = new DiscountDto
+                        {
+                            Id = categoryDiscount.Id,
+                            Name = categoryDiscount.Name,
+                            DiscountPercentage = categoryDiscount.DiscountPercentage,
+                            StartDate = categoryDiscount.StartDate,
+                            EndDate = categoryDiscount.EndDate,
+                            IsActive = categoryDiscount.IsActive
+                        };
+                    }
+                }
+
+                return new CartItemDto
+                {
+                    Id = ci.Id,
+                    ProductId = ci.ProductId,
+                    ProductName = ci.Product.Name,
+                    ProductPrice = ci.Product.Price,
+                    DiscountedPrice = discountedPrice,
+                    Discount = discountDto,
+                    Quantity = ci.Quantity,
+                    TotalPrice = unitPrice * ci.Quantity,
+                    PrimaryImage = ci.Product.ProductImages?.FirstOrDefault()?.ImageData,
+                    ImageMimeType = ci.Product.ProductImages?.FirstOrDefault()?.MimeType
+                };
             }).ToList();
 
             return new CartDto

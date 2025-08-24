@@ -12,6 +12,7 @@ namespace Ashnest.DTOs
         public string ImageMimeType { get; set; }
         public int? ParentCategoryId { get; set; }
         public string ParentCategoryName { get; set; }
+        public DiscountDto Discount { get; set; } // Add this
         public List<CategoryDto> SubCategories { get; set; }
     }
 
@@ -26,12 +27,13 @@ namespace Ashnest.DTOs
 
     // In Ashnest/DTOs/CategoryDto.cs
     // In Ashnest/DTOs/CategoryDto.cs
+
     public class UpdateCategoryRequest
     {
         public string Name { get; set; }
         public string Description { get; set; }
         public int? ParentCategoryId { get; set; }
-        public IFormFile? ImageFile { get; set; }  // جعلها nullable
+        public IFormFile? ImageFile { get; set; }
         public bool RemoveImage { get; set; }
     }
 }

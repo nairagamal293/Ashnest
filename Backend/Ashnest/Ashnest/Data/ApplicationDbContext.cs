@@ -22,8 +22,10 @@ namespace Ashnest.Data
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Coupon> Coupons { get; set; }
+        public DbSet<Discount> Discounts { get; set; }
         public DbSet<Wishlist> Wishlists { get; set; }
 
+        // Ashnest/Data/ApplicationDbContext.cs
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -74,7 +76,6 @@ namespace Ashnest.Data
                 .WithMany(c => c.CartItems)
                 .HasForeignKey(ci => ci.CartId)
                 .OnDelete(DeleteBehavior.Cascade);
-
             modelBuilder.Entity<CartItem>()
                 .HasOne(ci => ci.Product)
                 .WithMany(p => p.CartItems)
@@ -87,7 +88,6 @@ namespace Ashnest.Data
                 .WithMany(u => u.Orders)
                 .HasForeignKey(o => o.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
-
             modelBuilder.Entity<Order>()
                 .HasOne(o => o.Address)
                 .WithMany(a => a.Orders)
@@ -100,7 +100,6 @@ namespace Ashnest.Data
                 .WithMany(o => o.OrderItems)
                 .HasForeignKey(oi => oi.OrderId)
                 .OnDelete(DeleteBehavior.Cascade);
-
             modelBuilder.Entity<OrderItem>()
                 .HasOne(oi => oi.Product)
                 .WithMany(p => p.OrderItems)
@@ -113,7 +112,6 @@ namespace Ashnest.Data
                 .WithMany(u => u.Reviews)
                 .HasForeignKey(r => r.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
-
             modelBuilder.Entity<Review>()
                 .HasOne(r => r.Product)
                 .WithMany(p => p.Reviews)
@@ -126,7 +124,6 @@ namespace Ashnest.Data
                 .WithMany(u => u.Wishlists)
                 .HasForeignKey(w => w.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
-
             modelBuilder.Entity<Wishlist>()
                 .HasOne(w => w.Product)
                 .WithMany(p => p.Wishlists)
@@ -137,6 +134,20 @@ namespace Ashnest.Data
             modelBuilder.Entity<Coupon>()
                 .HasIndex(c => c.CouponCode)
                 .IsUnique();
+
+            // Ashnest/Data/ApplicationDbContext.cs (update Discount configuration)
+            // Discount configuration
+            modelBuilder.Entity<Discount>()
+                .HasOne(d => d.Product)
+                .WithMany(p => p.Discounts)
+                .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Discount>()
+                .HasOne(d => d.Category)
+                .WithMany(c => c.Discounts)
+                .HasForeignKey(d => d.CategoryId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

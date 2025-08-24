@@ -359,6 +359,44 @@
             display: inline-block;
         }
         
+        /* Discount Styles */
+        .discount-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: var(--danger-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            z-index: 5;
+        }
+        
+        .original-price {
+            text-decoration: line-through;
+            color: #a0aec0;
+            font-size: 1rem;
+            margin-left: 8px;
+        }
+        
+        .discounted-price {
+            color: var(--danger-color);
+            font-weight: 700;
+        }
+        
+        .discount-info {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: var(--success-color);
+            display: flex;
+            align-items: center;
+        }
+        
+        .discount-info i {
+            margin-left: 5px;
+        }
+        
         /* Footer */
         .footer {
             background-color: var(--dark-color);
@@ -782,7 +820,237 @@
     </script>
     
     <!-- Common JavaScript -->
-    <script src="js/common.js"></script>
+    <script>
+        // API Configuration
+        const API_BASE_URL = 'https://localhost:7124/api';
+        
+        // DOM Elements
+        const loginLink = document.getElementById('loginLink');
+        const registerLink = document.getElementById('registerLink');
+        const profileLink = document.getElementById('profileLink');
+        const logoutLink = document.getElementById('logoutLink');
+        const userDropdown = document.getElementById('userDropdown');
+        const cartCount = document.querySelector('.cart-count');
+        const categoriesMenu = document.getElementById('categoriesMenu');
+        
+        // Check if user is logged in
+        function checkAuthStatus() {
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            if (token) {
+                // Show user profile and logout links
+                if (loginLink) loginLink.style.display = 'none';
+                if (registerLink) registerLink.style.display = 'none';
+                if (profileLink) profileLink.style.display = 'block';
+                if (logoutLink) logoutLink.style.display = 'block';
+                
+                // Update user avatar
+                if (userDropdown) {
+                    const avatar = userDropdown.querySelector('.user-avatar');
+                    if (avatar) {
+                        avatar.src = `https://ui-avatars.com/api/?name=${user.firstName}+${user.lastName}&background=2c3e50&color=fff`;
+                    }
+                }
+            } else {
+                // Show login and register links
+                if (loginLink) loginLink.style.display = 'block';
+                if (registerLink) registerLink.style.display = 'block';
+                if (profileLink) profileLink.style.display = 'none';
+                if (logoutLink) logoutLink.style.display = 'none';
+            }
+        }
+        
+        // Logout function
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        }
+        
+        // API Request function
+        async function apiRequest(endpoint, options = {}) {
+            const url = `${API_BASE_URL}${endpoint}`;
+            const token = localStorage.getItem('token');
+            
+            const defaultOptions = {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+            
+            // Add authorization header if token exists
+            if (token) {
+                defaultOptions.headers.Authorization = `Bearer ${token}`;
+            }
+            
+            const config = { ...defaultOptions, ...options };
+            
+            // If body is provided and it's not a string, stringify it
+            if (config.body && typeof config.body !== 'string') {
+                config.body = JSON.stringify(config.body);
+            }
+            
+            try {
+                const response = await fetch(url, config);
+                
+                // Handle 401 Unauthorized (token expired or invalid)
+                if (response.status === 401) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    
+                    // Only redirect if not already on login page to prevent infinite loop
+                    if (!window.location.pathname.includes('login.html')) {
+                        window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.pathname);
+                    }
+                    throw new Error('Session expired. Please login again.');
+                }
+                
+                if (!response.ok) {
+                    let errorMessage = 'Something went wrong';
+                    
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.message || errorData.title || JSON.stringify(errorData);
+                        
+                        // If it's a validation error, get more details
+                        if (errorData.errors) {
+                            const validationErrors = Object.values(errorData.errors)
+                                .flat()
+                                .join(', ');
+                            errorMessage = validationErrors || errorMessage;
+                        }
+                    } catch (e) {
+                        // If we can't parse the error response, use the status text
+                        errorMessage = response.statusText || `Error ${response.status}`;
+                    }
+                    
+                    throw new Error(errorMessage);
+                }
+                
+                // For 204 No Content responses
+                if (response.status === 204) {
+                    return null;
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error('API Request Error:', error);
+                throw error;
+            }
+        }
+        
+        // Load categories for navigation
+        async function loadCategories() {
+            try {
+                const categories = await apiRequest('/categories');
+                
+                if (categoriesMenu) {
+                    categoriesMenu.innerHTML = '';
+                    categories.forEach(category => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<a class="dropdown-item" href="products.html?category=${category.id}">${category.name}</a>`;
+                        categoriesMenu.appendChild(li);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading categories:', error);
+            }
+        }
+        
+        // Update cart count
+        async function updateCartCount() {
+            const token = localStorage.getItem('token');
+            
+            if (!token || !cartCount) return;
+            
+            try {
+                const cart = await apiRequest('/cart');
+                cartCount.textContent = cart.totalItems || 0;
+            } catch (error) {
+                console.error('Error updating cart count:', error);
+            }
+        }
+        
+        // Format price
+        function formatPrice(price) {
+            return new Intl.NumberFormat('ar-SA', {
+                style: 'currency',
+                currency: 'SAR',
+                minimumFractionDigits: 0
+            }).format(price);
+        }
+        
+        // Format date
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('ar-SA', options);
+        }
+        
+        // Show notification
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type} position-fixed top-0 start-50 translate-middle-x mt-3`;
+            notification.style.zIndex = '9999';
+            notification.style.dir = 'rtl';
+            notification.style.textAlign = 'right';
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+        
+        // Initialize common functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuthStatus();
+            loadCategories();
+            updateCartCount();
+            
+            // Add event listeners
+            if (logoutLink) {
+                logoutLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    logout();
+                });
+            }
+            
+            // Search functionality
+            const searchInput = document.querySelector('.search-input');
+            const searchBtn = document.querySelector('.search-btn');
+            
+            if (searchBtn && searchInput) {
+                searchBtn.addEventListener('click', () => {
+                    const searchTerm = searchInput.value.trim();
+                    if (searchTerm) {
+                        window.location.href = `products.html?search=${encodeURIComponent(searchTerm)}`;
+                    }
+                });
+                
+                searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        const searchTerm = searchInput.value.trim();
+                        if (searchTerm) {
+                            window.location.href = `products.html?search=${encodeURIComponent(searchTerm)}`;
+                        }
+                    }
+                });
+            }
+            
+            // Newsletter form
+            const newsletterForm = document.querySelector('.newsletter-form');
+            if (newsletterForm) {
+                newsletterForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const email = newsletterForm.querySelector('input[type="email"]').value;
+                    showNotification(`تم اشتراكك بنجاح باستخدام البريد الإلكتروني: ${email}`);
+                    newsletterForm.reset();
+                });
+            }
+        });
+    </script>
     
     <!-- Page Specific JavaScript -->
     <script>
@@ -828,7 +1096,7 @@
                 }
             }
             
-            // Render wishlist items
+            // Render wishlist items with discount information
             function renderWishlistItems(wishlist) {
                 const wishlistItemsContainer = document.getElementById('wishlistItems');
                 
@@ -857,91 +1125,112 @@
                 AOS.refresh();
             }
             
-            // Create wishlist item card with improved image handling
-            function createWishlistItemCard(item, index) {
-                const col = document.createElement('div');
-                col.className = 'col-md-6 col-lg-4 col-xl-3 mb-4';
-                col.setAttribute('data-aos', 'fade-up');
-                col.setAttribute('data-aos-delay', (index * 100).toString());
-                
-                function getWishlistItemImageUrl(imageData, mimeType) {
-                    if (!imageData) return 'https://via.placeholder.com/300x300?text=No+Image';
-                    
-                    // If imageData is a base64 string
-                    if (typeof imageData === 'string') {
-                        return `data:${mimeType || 'image/jpeg'};base64,${imageData}`;
-                    }
-                    
-                    // If imageData is binary
-                    if (imageData) {
-                        try {
-                            const base64 = arrayBufferToBase64(imageData);
-                            return `data:${mimeType || 'image/jpeg'};base64,${base64}`;
-                        } catch (e) {
-                            console.error('Error converting image to base64:', e);
-                        }
-                    }
-                    
-                    return 'https://via.placeholder.com/300x300?text=Invalid+Image';
-                }
-                
-                const imageUrl = getWishlistItemImageUrl(item.primaryImage, item.imageMimeType);
-                
-                col.innerHTML = `
-                    <div class="card product-card h-100">
-                        <div class="product-img-container">
-                            <img src="${imageUrl}" class="card-img-top" alt="${item.productName}" 
-                                 onerror="this.src='https://via.placeholder.com/300x300?text=Image+Not+Available'">
-                            <div class="product-actions">
-                                <button class="btn btn-sm btn-light remove-from-wishlist" data-item-id="${item.id}">
-                                    <i class="bi bi-heart-fill text-danger"></i>
-                                </button>
-                                <button class="btn btn-sm btn-light quick-view" data-product-id="${item.productId}">
-                                    <i class="bi bi-eye"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="product-title">${item.productName}</h5>
-                            <div class="product-price">
-                                ${formatPrice(item.productPrice)}
-                            </div>
-                        </div>
-                        <div class="card-footer bg-transparent border-top-0">
-                            <div class="d-grid gap-2">
-                                <a href="product-detail.html?id=${item.productId}" class="btn btn-outline-primary">عرض التفاصيل</a>
-                                <button class="btn btn-primary add-to-cart" data-product-id="${item.productId}">
-                                    <i class="bi bi-cart-plus"></i> أضف إلى السلة
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-                // Add event listeners
-                const removeFromWishlistBtn = col.querySelector('.remove-from-wishlist');
-                if (removeFromWishlistBtn) {
-                    removeFromWishlistBtn.addEventListener('click', () => {
-                        removeFromWishlist(item.id);
-                    });
-                }
-                
-                const quickViewBtn = col.querySelector('.quick-view');
-                if (quickViewBtn) {
-                    quickViewBtn.addEventListener('click', () => {
-                        window.location.href = `product-detail.html?id=${item.productId}`;
-                    });
-                }
-                
-                const addToCartBtn = col.querySelector('.add-to-cart');
-                if (addToCartBtn) {
-                    addToCartBtn.addEventListener('click', () => {
-                        addToCart(item.productId);
-                    });
-                }
-                
-                return col;
+            // Create wishlist item card with discount information
+            // Create wishlist item card with discount information
+function createWishlistItemCard(item, index) {
+    const col = document.createElement('div');
+    col.className = 'col-md-6 col-lg-4 col-xl-3 mb-4';
+    col.setAttribute('data-aos', 'fade-up');
+    col.setAttribute('data-aos-delay', (index * 100).toString());
+    
+    function getWishlistItemImageUrl(imageData, mimeType) {
+        if (!imageData) return 'https://via.placeholder.com/300x300?text=No+Image';
+        
+        // If imageData is a base64 string
+        if (typeof imageData === 'string') {
+            return `data:${mimeType || 'image/jpeg'};base64,${imageData}`;
+        }
+        
+        // If imageData is binary
+        if (imageData) {
+            try {
+                const base64 = arrayBufferToBase64(imageData);
+                return `data:${mimeType || 'image/jpeg'};base64,${base64}`;
+            } catch (e) {
+                console.error('Error converting image to base64:', e);
             }
+        }
+        
+        return 'https://via.placeholder.com/300x300?text=Invalid+Image';
+    }
+    
+    const imageUrl = getWishlistItemImageUrl(item.primaryImage, item.imageMimeType);
+    
+    // Calculate discount information from API data
+    let discountPercentage = 0;
+    let originalPrice = item.productPrice;
+    let discountedPrice = item.discountedPrice;
+    
+    if (discountedPrice && discountedPrice < originalPrice) {
+        discountPercentage = Math.round((1 - discountedPrice / originalPrice) * 100);
+    }
+    
+    col.innerHTML = `
+        <div class="card product-card h-100">
+            <div class="product-img-container">
+                <img src="${imageUrl}" class="card-img-top" alt="${item.productName}" 
+                     onerror="this.src='https://via.placeholder.com/300x300?text=Image+Not+Available'">
+                ${discountPercentage > 0 ? `<span class="discount-badge">${discountPercentage}% خصم</span>` : ''}
+                <div class="product-actions">
+                    <button class="btn btn-sm btn-light remove-from-wishlist" data-item-id="${item.id}">
+                        <i class="bi bi-heart-fill text-danger"></i>
+                    </button>
+                    <button class="btn btn-sm btn-light quick-view" data-product-id="${item.productId}">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <h5 class="product-title">${item.productName}</h5>
+                <div class="product-price">
+                    ${discountedPrice ? 
+                        `<span class="discounted-price">${formatPrice(discountedPrice)}</span>
+                         <span class="original-price">${formatPrice(originalPrice)}</span>` 
+                        : formatPrice(originalPrice)
+                    }
+                </div>
+                ${discountedPrice ? `
+                    <div class="discount-info">
+                        <i class="bi bi-check-circle"></i>
+                        وفرت ${formatPrice(originalPrice - discountedPrice)}
+                    </div>
+                ` : ''}
+            </div>
+            <div class="card-footer bg-transparent border-top-0">
+                <div class="d-grid gap-2">
+                    <a href="product-detail.html?id=${item.productId}" class="btn btn-outline-primary">عرض التفاصيل</a>
+                    <button class="btn btn-primary add-to-cart" data-product-id="${item.productId}">
+                        <i class="bi bi-cart-plus"></i> أضف إلى السلة
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Add event listeners
+    const removeFromWishlistBtn = col.querySelector('.remove-from-wishlist');
+    if (removeFromWishlistBtn) {
+        removeFromWishlistBtn.addEventListener('click', () => {
+            removeFromWishlist(item.id);
+        });
+    }
+    
+    const quickViewBtn = col.querySelector('.quick-view');
+    if (quickViewBtn) {
+        quickViewBtn.addEventListener('click', () => {
+            window.location.href = `product-detail.html?id=${item.productId}`;
+        });
+    }
+    
+    const addToCartBtn = col.querySelector('.add-to-cart');
+    if (addToCartBtn) {
+        addToCartBtn.addEventListener('click', () => {
+            addToCart(item.productId);
+        });
+    }
+    
+    return col;
+}
             
             // Remove from wishlist
             async function removeFromWishlist(itemId) {

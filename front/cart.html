@@ -354,6 +354,31 @@
             font-weight: 600;
         }
         
+        .discount-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: var(--danger-color);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            z-index: 5;
+        }
+        
+        .original-price {
+            text-decoration: line-through;
+            color: #a0aec0;
+            font-size: 0.9rem;
+            margin-left: 8px;
+        }
+        
+        .discounted-price {
+            color: var(--danger-color);
+            font-weight: 600;
+        }
+        
         /* Footer */
         .footer {
             background-color: var(--dark-color);
@@ -794,6 +819,10 @@
                                     <span>المجموع الفرعي:</span>
                                     <span id="subtotal">0.00 ر.س</span>
                                 </div>
+                                <div class="summary-row discount-row" id="productDiscountRow" style="display: none;">
+                                    <span>خصم المنتجات:</span>
+                                    <span id="productDiscount">0.00 ر.س</span>
+                                </div>
                                 <div class="summary-row">
                                     <span>الشحن:</span>
                                     <span id="shipping">0.00 ر.س</span>
@@ -802,9 +831,9 @@
                                     <span>الضريبة:</span>
                                     <span id="tax">0.00 ر.س</span>
                                 </div>
-                                <div class="summary-row discount-row" id="discountRow" style="display: none;">
-                                    <span>الخصم:</span>
-                                    <span id="discount">0.00 ر.س</span>
+                                <div class="summary-row discount-row" id="couponDiscountRow" style="display: none;">
+                                    <span>خصم الكوبون:</span>
+                                    <span id="couponDiscount">0.00 ر.س</span>
                                 </div>
                                 <hr>
                                 <div class="summary-row total-row">
@@ -913,349 +942,620 @@
     </script>
     
     <!-- Common JavaScript -->
-    <script src="js/common.js"></script>
-    
-    <!-- Page Specific JavaScript -->
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    // Helper function to convert ArrayBuffer to Base64
-    function arrayBufferToBase64(buffer) {
-        let binary = '';
-        const bytes = new Uint8Array(buffer);
-        const len = bytes.byteLength;
-        for (let i = 0; i < len; i++) {
-            binary += String.fromCharCode(bytes[i]);
-        }
-        return window.btoa(binary);
-    }
-    
-    // Load cart
-    let cart = null;
-    let appliedCoupon = null;
-    
-    async function loadCart() {
-        try {
-            cart = await apiRequest('/cart');
-            renderCartItems(cart);
-            updateCartSummary(cart);
-        } catch (error) {
-            console.error('Error loading cart:', error);
+    <script>
+        // API Configuration
+        const API_BASE_URL = 'https://localhost:7124/api';
+        
+        // DOM Elements
+        const loginLink = document.getElementById('loginLink');
+        const registerLink = document.getElementById('registerLink');
+        const profileLink = document.getElementById('profileLink');
+        const logoutLink = document.getElementById('logoutLink');
+        const userDropdown = document.getElementById('userDropdown');
+        const cartCount = document.querySelector('.cart-count');
+        const categoriesMenu = document.getElementById('categoriesMenu');
+        
+        // Check if user is logged in
+        function checkAuthStatus() {
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
             
-            if (error.message.includes('401')) {
-                // User not logged in
-                document.getElementById('cartItems').innerHTML = `
-                    <tr>
-                        <td colspan="5" class="text-center py-5">
-                            <i class="bi bi-person-circle display-1 text-muted"></i>
-                            <h4 class="mt-3">يجب تسجيل الدخول</h4>
-                            <p class="text-muted">يجب تسجيل الدخول لعرض السلة</p>
-                            <a href="login.html" class="btn btn-primary">تسجيل الدخول</a>
-                        </td>
-                    </tr>
-                `;
-            } else {
-                document.getElementById('cartItems').innerHTML = `
-                    <tr>
-                        <td colspan="5" class="text-center py-5">
-                            <i class="bi bi-exclamation-triangle display-1 text-danger"></i>
-                            <h4 class="mt-3">حدث خطأ</h4>
-                            <p class="text-muted">لم نتمكن من تحميل السلة. يرجى المحاولة مرة أخرى لاحقاً.</p>
-                        </td>
-                    </tr>
-                `;
-            }
-        }
-    }
-    
-    // Render cart items with improved image handling
-    function renderCartItems(cart) {
-        const cartItemsContainer = document.getElementById('cartItems');
-        
-        if (!cart.items || cart.items.length === 0) {
-            cartItemsContainer.innerHTML = `
-                <tr>
-                    <td colspan="5" class="text-center py-5">
-                        <i class="bi bi-cart-x display-1 text-muted"></i>
-                        <h4 class="mt-3">السلة فارغة</h4>
-                        <p class="text-muted">لا توجد منتجات في السلة</p>
-                        <a href="products.html" class="btn btn-primary">تسوق الآن</a>
-                    </td>
-                </tr>
-            `;
-            
-            // Disable checkout button
-            document.getElementById('checkoutBtn').disabled = true;
-            return;
-        }
-        
-        // Enable checkout button
-        document.getElementById('checkoutBtn').disabled = false;
-        
-        cartItemsContainer.innerHTML = '';
-        cart.items.forEach((item, index) => {
-            function getItemImageUrl(imageData, mimeType) {
-                if (!imageData) return 'https://via.placeholder.com/100x100?text=No+Image';
+            if (token) {
+                // Show user profile and logout links
+                if (loginLink) loginLink.style.display = 'none';
+                if (registerLink) registerLink.style.display = 'none';
+                if (profileLink) profileLink.style.display = 'block';
+                if (logoutLink) logoutLink.style.display = 'block';
                 
-                // If imageData is a base64 string
-                if (typeof imageData === 'string') {
-                    return `data:${mimeType || 'image/jpeg'};base64,${imageData}`;
-                }
-                
-                // If imageData is binary
-                if (imageData) {
-                    try {
-                        const base64 = arrayBufferToBase64(imageData);
-                        return `data:${mimeType || 'image/jpeg'};base64,${base64}`;
-                    } catch (e) {
-                        console.error('Error converting image to base64:', e);
+                // Update user avatar
+                if (userDropdown) {
+                    const avatar = userDropdown.querySelector('.user-avatar');
+                    if (avatar) {
+                        avatar.src = `https://ui-avatars.com/api/?name=${user.firstName}+${user.lastName}&background=2c3e50&color=fff`;
                     }
                 }
-                
-                return 'https://via.placeholder.com/100x100?text=Invalid+Image';
+            } else {
+                // Show login and register links
+                if (loginLink) loginLink.style.display = 'block';
+                if (registerLink) registerLink.style.display = 'block';
+                if (profileLink) profileLink.style.display = 'none';
+                if (logoutLink) logoutLink.style.display = 'none';
+            }
+        }
+        
+        // Logout function
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        }
+        
+        // API Request function
+        async function apiRequest(endpoint, options = {}) {
+            const url = `${API_BASE_URL}${endpoint}`;
+            const token = localStorage.getItem('token');
+            
+            const defaultOptions = {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+            
+            // Add authorization header if token exists
+            if (token) {
+                defaultOptions.headers.Authorization = `Bearer ${token}`;
             }
             
-            const imageUrl = getItemImageUrl(item.primaryImage, item.imageMimeType);
+            const config = { ...defaultOptions, ...options };
             
-            const row = document.createElement('tr');
-            row.setAttribute('data-aos', 'fade-up');
-            row.setAttribute('data-aos-delay', (index * 100).toString());
-            row.innerHTML = `
-                <td>
-                    <div class="d-flex align-items-center">
-                        <img src="${imageUrl}" alt="${item.productName}" class="cart-item-img" 
-                             onerror="this.src='https://via.placeholder.com/100x100?text=Image+Not+Available'">
-                        <div class="ms-3">
-                            <h6 class="mb-0">${item.productName}</h6>
-                            <small class="text-muted">رمز المنتج: #${item.productId}</small>
-                        </div>
-                    </div>
-                </td>
-                <td>${formatPrice(item.productPrice)}</td>
-                <td>
-                    <div class="quantity-selector">
-                        <button class="btn btn-sm btn-outline-secondary decrease-quantity" data-item-id="${item.id}">-</button>
-                        <input type="number" class="form-control form-control-sm text-center item-quantity" data-item-id="${item.id}" value="${item.quantity}" min="1" max="10">
-                        <button class="btn btn-sm btn-outline-secondary increase-quantity" data-item-id="${item.id}">+</button>
-                    </div>
-                </td>
-                <td>${formatPrice(item.totalPrice)}</td>
-                <td>
-                    <button class="btn btn-sm btn-outline-danger remove-item" data-item-id="${item.id}">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                </td>
-            `;
+            // If body is provided and it's not a string, stringify it
+            if (config.body && typeof config.body !== 'string') {
+                config.body = JSON.stringify(config.body);
+            }
             
-            cartItemsContainer.appendChild(row);
-        });
-        
-        // Refresh AOS
-        AOS.refresh();
-        
-        // Add event listeners
-        document.querySelectorAll('.decrease-quantity').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const itemId = parseInt(btn.dataset.itemId);
-                const quantityInput = document.querySelector(`.item-quantity[data-item-id="${itemId}"]`);
-                const currentValue = parseInt(quantityInput.value);
+            try {
+                const response = await fetch(url, config);
                 
-                if (currentValue > 1) {
-                    updateCartItemQuantity(itemId, currentValue - 1);
+                // Handle 401 Unauthorized (token expired or invalid)
+                if (response.status === 401) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    
+                    // Only redirect if not already on login page to prevent infinite loop
+                    if (!window.location.pathname.includes('login.html')) {
+                        window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.pathname);
+                    }
+                    throw new Error('Session expired. Please login again.');
                 }
-            });
-        });
-        
-        document.querySelectorAll('.increase-quantity').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const itemId = parseInt(btn.dataset.itemId);
-                const quantityInput = document.querySelector(`.item-quantity[data-item-id="${itemId}"]`);
-                const currentValue = parseInt(quantityInput.value);
                 
-                if (currentValue < 10) {
-                    updateCartItemQuantity(itemId, currentValue + 1);
+                if (!response.ok) {
+                    let errorMessage = 'Something went wrong';
+                    
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.message || errorData.title || JSON.stringify(errorData);
+                        
+                        // If it's a validation error, get more details
+                        if (errorData.errors) {
+                            const validationErrors = Object.values(errorData.errors)
+                                .flat()
+                                .join(', ');
+                            errorMessage = validationErrors || errorMessage;
+                        }
+                    } catch (e) {
+                        // If we can't parse the error response, use the status text
+                        errorMessage = response.statusText || `Error ${response.status}`;
+                    }
+                    
+                    throw new Error(errorMessage);
                 }
-            });
-        });
-        
-        document.querySelectorAll('.item-quantity').forEach(input => {
-            input.addEventListener('change', () => {
-                const itemId = parseInt(input.dataset.itemId);
-                const newValue = parseInt(input.value);
                 
-                if (newValue >= 1 && newValue <= 10) {
-                    updateCartItemQuantity(itemId, newValue);
+                // For 204 No Content responses
+                if (response.status === 204) {
+                    return null;
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error('API Request Error:', error);
+                throw error;
+            }
+        }
+        
+        // Load categories for navigation
+        async function loadCategories() {
+            try {
+                const categories = await apiRequest('/categories');
+                
+                if (categoriesMenu) {
+                    categoriesMenu.innerHTML = '';
+                    categories.forEach(category => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<a class="dropdown-item" href="products.html?category=${category.id}">${category.name}</a>`;
+                        categoriesMenu.appendChild(li);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading categories:', error);
+            }
+        }
+        
+        // Update cart count
+        async function updateCartCount() {
+            const token = localStorage.getItem('token');
+            
+            if (!token || !cartCount) return;
+            
+            try {
+                const cart = await apiRequest('/cart');
+                cartCount.textContent = cart.totalItems || 0;
+            } catch (error) {
+                console.error('Error updating cart count:', error);
+            }
+        }
+        
+        // Format price
+        function formatPrice(price) {
+            return new Intl.NumberFormat('ar-SA', {
+                style: 'currency',
+                currency: 'SAR',
+                minimumFractionDigits: 0
+            }).format(price);
+        }
+        
+        // Format date
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('ar-SA', options);
+        }
+        
+        // Show notification
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type} position-fixed top-0 start-50 translate-middle-x mt-3`;
+            notification.style.zIndex = '9999';
+            notification.style.dir = 'rtl';
+            notification.style.textAlign = 'right';
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+        
+        // Initialize common functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuthStatus();
+            loadCategories();
+            updateCartCount();
+            
+            // Add event listeners
+            if (logoutLink) {
+                logoutLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    logout();
+                });
+            }
+            
+            // Search functionality
+            const searchInput = document.querySelector('.search-input');
+            const searchBtn = document.querySelector('.search-btn');
+            
+            if (searchBtn && searchInput) {
+                searchBtn.addEventListener('click', () => {
+                    const searchTerm = searchInput.value.trim();
+                    if (searchTerm) {
+                        window.location.href = `products.html?search=${encodeURIComponent(searchTerm)}`;
+                    }
+                });
+                
+                searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        const searchTerm = searchInput.value.trim();
+                        if (searchTerm) {
+                            window.location.href = `products.html?search=${encodeURIComponent(searchTerm)}`;
+                        }
+                    }
+                });
+            }
+            
+            // Newsletter form
+            const newsletterForm = document.querySelector('.newsletter-form');
+            if (newsletterForm) {
+                newsletterForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const email = newsletterForm.querySelector('input[type="email"]').value;
+                    showNotification(`تم اشتراكك بنجاح باستخدام البريد الإلكتروني: ${email}`);
+                    newsletterForm.reset();
+                });
+            }
+        });
+    </script>
+    
+    <!-- Page Specific JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Helper function to convert ArrayBuffer to Base64
+            function arrayBufferToBase64(buffer) {
+                let binary = '';
+                const bytes = new Uint8Array(buffer);
+                const len = bytes.byteLength;
+                for (let i = 0; i < len; i++) {
+                    binary += String.fromCharCode(bytes[i]);
+                }
+                return window.btoa(binary);
+            }
+            
+            // Load cart
+            let cart = null;
+            let appliedCoupon = null;
+            
+            async function loadCart() {
+                try {
+                    cart = await apiRequest('/cart');
+                    renderCartItems(cart);
+                    updateCartSummary(cart);
+                } catch (error) {
+                    console.error('Error loading cart:', error);
+                    
+                    if (error.message.includes('401')) {
+                        // User not logged in
+                        document.getElementById('cartItems').innerHTML = `
+                            <tr>
+                                <td colspan="5" class="text-center py-5">
+                                    <i class="bi bi-person-circle display-1 text-muted"></i>
+                                    <h4 class="mt-3">يجب تسجيل الدخول</h4>
+                                    <p class="text-muted">يجب تسجيل الدخول لعرض السلة</p>
+                                    <a href="login.html" class="btn btn-primary">تسجيل الدخول</a>
+                                </td>
+                            </tr>
+                        `;
+                    } else {
+                        document.getElementById('cartItems').innerHTML = `
+                            <tr>
+                                <td colspan="5" class="text-center py-5">
+                                    <i class="bi bi-exclamation-triangle display-1 text-danger"></i>
+                                    <h4 class="mt-3">حدث خطأ</h4>
+                                    <p class="text-muted">لم نتمكن من تحميل السلة. يرجى المحاولة مرة أخرى لاحقاً.</p>
+                                </td>
+                            </tr>
+                        `;
+                    }
+                }
+            }
+            
+            // Render cart items with improved image handling and discount display
+            function renderCartItems(cart) {
+                const cartItemsContainer = document.getElementById('cartItems');
+                
+                if (!cart.items || cart.items.length === 0) {
+                    cartItemsContainer.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="text-center py-5">
+                                <i class="bi bi-cart-x display-1 text-muted"></i>
+                                <h4 class="mt-3">السلة فارغة</h4>
+                                <p class="text-muted">لا توجد منتجات في السلة</p>
+                                <a href="products.html" class="btn btn-primary">تسوق الآن</a>
+                            </td>
+                        </tr>
+                    `;
+                    
+                    // Disable checkout button
+                    document.getElementById('checkoutBtn').disabled = true;
+                    return;
+                }
+                
+                // Enable checkout button
+                document.getElementById('checkoutBtn').disabled = false;
+                
+                cartItemsContainer.innerHTML = '';
+                cart.items.forEach((item, index) => {
+                    function getItemImageUrl(imageData, mimeType) {
+                        if (!imageData) return 'https://via.placeholder.com/100x100?text=No+Image';
+                        
+                        // If imageData is a base64 string
+                        if (typeof imageData === 'string') {
+                            return `data:${mimeType || 'image/jpeg'};base64,${imageData}`;
+                        }
+                        
+                        // If imageData is binary
+                        if (imageData) {
+                            try {
+                                const base64 = arrayBufferToBase64(imageData);
+                                return `data:${mimeType || 'image/jpeg'};base64,${base64}`;
+                            } catch (e) {
+                                console.error('Error converting image to base64:', e);
+                            }
+                        }
+                        
+                        return 'https://via.placeholder.com/100x100?text=Invalid+Image';
+                    }
+                    
+                    const imageUrl = getItemImageUrl(item.primaryImage, item.imageMimeType);
+                    
+                    const row = document.createElement('tr');
+                    row.setAttribute('data-aos', 'fade-up');
+                    row.setAttribute('data-aos-delay', (index * 100).toString());
+                    
+                    // Calculate discount percentage
+                    let discountPercentage = 0;
+                    if (item.discountedPrice && item.discountedPrice < item.productPrice) {
+                        discountPercentage = Math.round((1 - item.discountedPrice / item.productPrice) * 100);
+                    }
+                    
+                    row.innerHTML = `
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="position-relative">
+                                    <img src="${imageUrl}" alt="${item.productName}" class="cart-item-img" 
+                                         onerror="this.src='https://via.placeholder.com/100x100?text=Image+Not+Available'">
+                                    ${discountPercentage > 0 ? `<span class="discount-badge">${discountPercentage}%</span>` : ''}
+                                </div>
+                                <div class="ms-3">
+                                    <h6 class="mb-0">${item.productName}</h6>
+                                    <small class="text-muted">رمز المنتج: #${item.productId}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            ${item.discountedPrice && item.discountedPrice < item.productPrice ? 
+                                `<span class="discounted-price">${formatPrice(item.discountedPrice)}</span>
+                                 <span class="original-price">${formatPrice(item.productPrice)}</span>` 
+                                : formatPrice(item.productPrice)
+                            }
+                        </td>
+                        <td>
+                            <div class="quantity-selector">
+                                <button class="btn btn-sm btn-outline-secondary decrease-quantity" data-item-id="${item.id}">-</button>
+                                <input type="number" class="form-control form-control-sm text-center item-quantity" data-item-id="${item.id}" value="${item.quantity}" min="1" max="10">
+                                <button class="btn btn-sm btn-outline-secondary increase-quantity" data-item-id="${item.id}">+</button>
+                            </div>
+                        </td>
+                        <td>${formatPrice(item.totalPrice)}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-danger remove-item" data-item-id="${item.id}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    `;
+                    
+                    cartItemsContainer.appendChild(row);
+                });
+                
+                // Refresh AOS
+                AOS.refresh();
+                
+                // Add event listeners
+                document.querySelectorAll('.decrease-quantity').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const itemId = parseInt(btn.dataset.itemId);
+                        const quantityInput = document.querySelector(`.item-quantity[data-item-id="${itemId}"]`);
+                        const currentValue = parseInt(quantityInput.value);
+                        
+                        if (currentValue > 1) {
+                            updateCartItemQuantity(itemId, currentValue - 1);
+                        }
+                    });
+                });
+                
+                document.querySelectorAll('.increase-quantity').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const itemId = parseInt(btn.dataset.itemId);
+                        const quantityInput = document.querySelector(`.item-quantity[data-item-id="${itemId}"]`);
+                        const currentValue = parseInt(quantityInput.value);
+                        
+                        if (currentValue < 10) {
+                            updateCartItemQuantity(itemId, currentValue + 1);
+                        }
+                    });
+                });
+                
+                document.querySelectorAll('.item-quantity').forEach(input => {
+                    input.addEventListener('change', () => {
+                        const itemId = parseInt(input.dataset.itemId);
+                        const newValue = parseInt(input.value);
+                        
+                        if (newValue >= 1 && newValue <= 10) {
+                            updateCartItemQuantity(itemId, newValue);
+                        } else {
+                            input.value = cart.items.find(item => item.id === itemId).quantity;
+                        }
+                    });
+                });
+                
+                document.querySelectorAll('.remove-item').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const itemId = parseInt(btn.dataset.itemId);
+                        removeCartItem(itemId);
+                    });
+                });
+            }
+            
+            // Update cart summary with discounts
+            function updateCartSummary(cart) {
+                // Calculate original total (without discounts)
+                const originalTotal = cart.items.reduce((sum, item) => sum + (item.productPrice * item.quantity), 0);
+                
+                // Calculate product discount total
+                const productDiscountTotal = originalTotal - cart.totalAmount;
+                
+                // Calculate shipping (free for orders over 200 SAR)
+                const shipping = cart.totalAmount > 200 ? 0 : 20;
+                
+                // Calculate tax (15% VAT)
+                const tax = 0.15 * (cart.totalAmount + shipping);
+                
+                // Calculate coupon discount
+                let couponDiscountAmount = 0;
+                if (appliedCoupon) {
+                    couponDiscountAmount = appliedCoupon.discountAmount || 0;
+                }
+                
+                // Calculate final total
+                const total = (cart.totalAmount - couponDiscountAmount) + shipping + tax;
+                
+                // Update DOM elements
+                document.getElementById('subtotal').textContent = formatPrice(originalTotal);
+                document.getElementById('shipping').textContent = formatPrice(shipping);
+                document.getElementById('tax').textContent = formatPrice(tax);
+                document.getElementById('total').textContent = formatPrice(total);
+                
+                // Show/hide product discount row
+                const productDiscountRow = document.getElementById('productDiscountRow');
+                if (productDiscountTotal > 0) {
+                    document.getElementById('productDiscount').textContent = formatPrice(productDiscountTotal);
+                    productDiscountRow.style.display = 'flex';
                 } else {
-                    input.value = cart.items.find(item => item.id === itemId).quantity;
+                    productDiscountRow.style.display = 'none';
+                }
+                
+                // Show/hide coupon discount row
+                const couponDiscountRow = document.getElementById('couponDiscountRow');
+                if (couponDiscountAmount > 0) {
+                    document.getElementById('couponDiscount').textContent = formatPrice(couponDiscountAmount);
+                    couponDiscountRow.style.display = 'flex';
+                } else {
+                    couponDiscountRow.style.display = 'none';
+                }
+            }
+            
+            // Update cart item quantity
+            async function updateCartItemQuantity(itemId, quantity) {
+                try {
+                    await apiRequest(`/cart/items/${itemId}`, {
+                        method: 'PUT',
+                        body: { quantity }
+                    });
+                    
+                    // Reload cart
+                    loadCart();
+                    updateCartCount();
+                } catch (error) {
+                    showNotification(error.message, 'danger');
+                }
+            }
+            
+            // Remove cart item
+            async function removeCartItem(itemId) {
+                try {
+                    await apiRequest(`/cart/items/${itemId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    showNotification('تم إزالة المنتج من السلة');
+                    
+                    // Reload cart
+                    loadCart();
+                    updateCartCount();
+                } catch (error) {
+                    showNotification(error.message, 'danger');
+                }
+            }
+            
+            // Clear cart
+            async function clearCart() {
+                if (!confirm('هل أنت متأكد من أنك تريد إفراغ السلة؟')) {
+                    return;
+                }
+                
+                try {
+                    await apiRequest('/cart/clear', {
+                        method: 'DELETE'
+                    });
+                    
+                    showNotification('تم إفراغ السلة');
+                    
+                    // Reload cart
+                    loadCart();
+                    updateCartCount();
+                } catch (error) {
+                    showNotification(error.message, 'danger');
+                }
+            }
+            
+            // Apply coupon
+            async function applyCoupon() {
+                const couponCode = document.getElementById('couponCode').value.trim();
+                
+                if (!couponCode) {
+                    showNotification('يرجى إدخال كود الخصم', 'warning');
+                    return;
+                }
+                
+                try {
+                    const subtotal = cart.totalAmount;
+                    const validation = await apiRequest('/coupons/validate', {
+                        method: 'POST',
+                        body: { couponCode, orderAmount: subtotal }
+                    });
+                    
+                    if (validation.isValid) {
+                        appliedCoupon = {
+                            code: couponCode,
+                            discountPercentage: validation.discountPercentage,
+                            discountAmount: validation.discountAmount
+                        };
+                        
+                        // Save coupon to localStorage for checkout page
+                        localStorage.setItem('appliedCoupon', JSON.stringify(appliedCoupon));
+                        
+                        document.getElementById('couponMessage').innerHTML = `
+                            <div class="alert alert-success">
+                                ${validation.message}
+                            </div>
+                        `;
+                        
+                        updateCartSummary(cart);
+                    } else {
+                        document.getElementById('couponMessage').innerHTML = `
+                            <div class="alert alert-danger">
+                                ${validation.message}
+                            </div>
+                        `;
+                    }
+                } catch (error) {
+                    document.getElementById('couponMessage').innerHTML = `
+                        <div class="alert alert-danger">
+                            ${error.message}
+                        </div>
+                    `;
+                }
+            }
+            
+            // Event listeners
+            document.getElementById('continueShoppingBtn').addEventListener('click', () => {
+                window.location.href = 'products.html';
+            });
+            
+            document.getElementById('clearCartBtn').addEventListener('click', clearCart);
+            
+            document.getElementById('applyCouponBtn').addEventListener('click', applyCoupon);
+            
+            document.getElementById('couponCode').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    applyCoupon();
                 }
             });
-        });
-        
-        document.querySelectorAll('.remove-item').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const itemId = parseInt(btn.dataset.itemId);
-                removeCartItem(itemId);
-            });
-        });
-    }
-    
-    // Update cart summary
-    function updateCartSummary(cart) {
-        const subtotal = cart.totalAmount;
-        const shipping = subtotal > 200 ? 0 : 20; // Free shipping for orders over 200 SAR
-        const tax = subtotal * 0.15; // 15% VAT
-        let discount = 0;
-        
-        if (appliedCoupon) {
-            discount = appliedCoupon.discountAmount || 0;
-            document.getElementById('discountRow').style.display = 'flex';
-            document.getElementById('discount').textContent = formatPrice(discount);
-        } else {
-            document.getElementById('discountRow').style.display = 'none';
-        }
-        
-        const total = subtotal + shipping + tax - discount;
-        
-        document.getElementById('subtotal').textContent = formatPrice(subtotal);
-        document.getElementById('shipping').textContent = formatPrice(shipping);
-        document.getElementById('tax').textContent = formatPrice(tax);
-        document.getElementById('total').textContent = formatPrice(total);
-    }
-    
-    // Update cart item quantity
-    async function updateCartItemQuantity(itemId, quantity) {
-        try {
-            await apiRequest(`/cart/items/${itemId}`, {
-                method: 'PUT',
-                body: { quantity }
-            });
             
-            // Reload cart
-            loadCart();
-            updateCartCount();
-        } catch (error) {
-            showNotification(error.message, 'danger');
-        }
-    }
-    
-    // Remove cart item
-    async function removeCartItem(itemId) {
-        try {
-            await apiRequest(`/cart/items/${itemId}`, {
-                method: 'DELETE'
-            });
-            
-            showNotification('تم إزالة المنتج من السلة');
-            
-            // Reload cart
-            loadCart();
-            updateCartCount();
-        } catch (error) {
-            showNotification(error.message, 'danger');
-        }
-    }
-    
-    // Clear cart
-    async function clearCart() {
-        if (!confirm('هل أنت متأكد من أنك تريد إفراغ السلة؟')) {
-            return;
-        }
-        
-        try {
-            await apiRequest('/cart/clear', {
-                method: 'DELETE'
-            });
-            
-            showNotification('تم إفراغ السلة');
-            
-            // Reload cart
-            loadCart();
-            updateCartCount();
-        } catch (error) {
-            showNotification(error.message, 'danger');
-        }
-    }
-    
-    // Apply coupon
-    async function applyCoupon() {
-        const couponCode = document.getElementById('couponCode').value.trim();
-        
-        if (!couponCode) {
-            showNotification('يرجى إدخال كود الخصم', 'warning');
-            return;
-        }
-        
-        try {
-            const subtotal = cart.totalAmount;
-            const validation = await apiRequest('/coupons/validate', {
-                method: 'POST',
-                body: { couponCode, orderAmount: subtotal }
-            });
-            
-            if (validation.isValid) {
-                appliedCoupon = {
-                    code: couponCode,
-                    discountPercentage: validation.discountPercentage,
-                    discountAmount: validation.discountAmount
-                };
+            document.getElementById('checkoutBtn').addEventListener('click', () => {
+                if (!cart || !cart.items || cart.items.length === 0) {
+                    showNotification('السلة فارغة', 'warning');
+                    return;
+                }
                 
                 // Save coupon to localStorage for checkout page
-                localStorage.setItem('appliedCoupon', JSON.stringify(appliedCoupon));
+                if (appliedCoupon) {
+                    localStorage.setItem('appliedCoupon', JSON.stringify(appliedCoupon));
+                }
                 
-                document.getElementById('couponMessage').innerHTML = `
-                    <div class="alert alert-success">
-                        ${validation.message}
-                    </div>
-                `;
-                
-                updateCartSummary(cart);
-            } else {
-                document.getElementById('couponMessage').innerHTML = `
-                    <div class="alert alert-danger">
-                        ${validation.message}
-                    </div>
-                `;
-            }
-        } catch (error) {
-            document.getElementById('couponMessage').innerHTML = `
-                <div class="alert alert-danger">
-                    ${error.message}
-                </div>
-            `;
-        }
-    }
-    
-    // Event listeners
-    document.getElementById('continueShoppingBtn').addEventListener('click', () => {
-        window.location.href = 'products.html';
-    });
-    
-    document.getElementById('clearCartBtn').addEventListener('click', clearCart);
-    
-    document.getElementById('applyCouponBtn').addEventListener('click', applyCoupon);
-    
-    document.getElementById('couponCode').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            applyCoupon();
-        }
-    });
-    
-    document.getElementById('checkoutBtn').addEventListener('click', () => {
-        if (!cart || !cart.items || cart.items.length === 0) {
-            showNotification('السلة فارغة', 'warning');
-            return;
-        }
-        
-        // Save coupon to localStorage for checkout page
-        if (appliedCoupon) {
-            localStorage.setItem('appliedCoupon', JSON.stringify(appliedCoupon));
-        }
-        
-        window.location.href = 'checkout.html';
-    });
-    
-    // Initialize
-    loadCart();
-});
-</script>
+                window.location.href = 'checkout.html';
+            });
+            
+            // Initialize
+            loadCart();
+        });
+    </script>
 </body>
 </html>

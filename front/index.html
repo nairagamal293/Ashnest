@@ -367,6 +367,19 @@
             z-index: 2;
         }
         
+        .discount-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: var(--danger-color);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            z-index: 2;
+        }
+        
         .product-actions-modern {
             position: absolute;
             top: 12px;
@@ -450,6 +463,11 @@
             margin-top: 15px;
         }
         
+        .price-container {
+            display: flex;
+            flex-direction: column;
+        }
+        
         .price-main-modern {
             font-size: 1.2rem;
             font-weight: 800;
@@ -460,7 +478,11 @@
             font-size: 0.9rem;
             text-decoration: line-through;
             color: var(--gray-color);
-            margin-left: 8px;
+        }
+        
+        .discounted-price {
+            color: var(--danger-color);
+            font-weight: 700;
         }
         
         .add-cart-btn-modern {
@@ -544,7 +566,6 @@
                 font-size: 0.8rem;
             }
         }
-
 
         /* Promo Banner */
         .promo-banner {
@@ -1243,7 +1264,6 @@
         </div>
     </section>
     
-
     <!-- Featured Products -->
     <section class="py-5 featured-products">
         <div class="container">
@@ -1430,13 +1450,251 @@
     </script>
     
     <!-- Common JavaScript -->
-    <script src="js/common.js"></script>
-    
+    <script>
+        // API Configuration
+        const API_BASE_URL = 'https://localhost:7124/api';
+        
+        // DOM Elements
+        const loginLink = document.getElementById('loginLink');
+        const registerLink = document.getElementById('registerLink');
+        const profileLink = document.getElementById('profileLink');
+        const logoutLink = document.getElementById('logoutLink');
+        const userDropdown = document.getElementById('userDropdown');
+        const cartCount = document.querySelector('.cart-count');
+        const categoriesMenu = document.getElementById('categoriesMenu');
+        
+        // Check if user is logged in
+        function checkAuthStatus() {
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            if (token) {
+                // Show user profile and logout links
+                if (loginLink) loginLink.style.display = 'none';
+                if (registerLink) registerLink.style.display = 'none';
+                if (profileLink) profileLink.style.display = 'block';
+                if (logoutLink) logoutLink.style.display = 'block';
+                
+                // Update user avatar
+                if (userDropdown) {
+                    const avatar = userDropdown.querySelector('.user-avatar');
+                    if (avatar) {
+                        avatar.src = `https://ui-avatars.com/api/?name=${user.firstName}+${user.lastName}&background=2c3e50&color=fff`;
+                    }
+                }
+            } else {
+                // Show login and register links
+                if (loginLink) loginLink.style.display = 'block';
+                if (registerLink) registerLink.style.display = 'block';
+                if (profileLink) profileLink.style.display = 'none';
+                if (logoutLink) logoutLink.style.display = 'none';
+            }
+        }
+        
+        // Logout function
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        }
+        
+        // API Request function
+        async function apiRequest(endpoint, options = {}) {
+            const url = `${API_BASE_URL}${endpoint}`;
+            const token = localStorage.getItem('token');
+            
+            const defaultOptions = {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+            
+            // Add authorization header if token exists
+            if (token) {
+                defaultOptions.headers.Authorization = `Bearer ${token}`;
+            }
+            
+            const config = { ...defaultOptions, ...options };
+            
+            // If body is provided and it's not a string, stringify it
+            if (config.body && typeof config.body !== 'string') {
+                config.body = JSON.stringify(config.body);
+            }
+            
+            try {
+                const response = await fetch(url, config);
+                
+                // Handle 401 Unauthorized (token expired or invalid)
+                if (response.status === 401) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    
+                    // Only redirect if not already on login page to prevent infinite loop
+                    if (!window.location.pathname.includes('login.html')) {
+                        window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.pathname);
+                    }
+                    throw new Error('Session expired. Please login again.');
+                }
+                
+                if (!response.ok) {
+                    let errorMessage = 'Something went wrong';
+                    
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.message || errorData.title || JSON.stringify(errorData);
+                        
+                        // If it's a validation error, get more details
+                        if (errorData.errors) {
+                            const validationErrors = Object.values(errorData.errors)
+                                .flat()
+                                .join(', ');
+                            errorMessage = validationErrors || errorMessage;
+                        }
+                    } catch (e) {
+                        // If we can't parse the error response, use the status text
+                        errorMessage = response.statusText || `Error ${response.status}`;
+                    }
+                    
+                    throw new Error(errorMessage);
+                }
+                
+                // For 204 No Content responses
+                if (response.status === 204) {
+                    return null;
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error('API Request Error:', error);
+                throw error;
+            }
+        }
+        
+        // Load categories for navigation
+        async function loadCategories() {
+            try {
+                const categories = await apiRequest('/categories');
+                
+                if (categoriesMenu) {
+                    categoriesMenu.innerHTML = '';
+                    categories.forEach(category => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<a class="dropdown-item" href="products.html?category=${category.id}">${category.name}</a>`;
+                        categoriesMenu.appendChild(li);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading categories:', error);
+            }
+        }
+        
+        // Update cart count
+        async function updateCartCount() {
+            const token = localStorage.getItem('token');
+            
+            if (!token || !cartCount) return;
+            
+            try {
+                const cart = await apiRequest('/cart');
+                cartCount.textContent = cart.totalItems || 0;
+            } catch (error) {
+                console.error('Error updating cart count:', error);
+            }
+        }
+        
+        // Format price
+        function formatPrice(price) {
+            return new Intl.NumberFormat('ar-SA', {
+                style: 'currency',
+                currency: 'SAR',
+                minimumFractionDigits: 0
+            }).format(price);
+        }
+        
+        // Format date
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('ar-SA', options);
+        }
+        
+        // Show notification
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type} position-fixed top-0 start-50 translate-middle-x mt-3`;
+            notification.style.zIndex = '9999';
+            notification.style.dir = 'rtl';
+            notification.style.textAlign = 'right';
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+        
+        // Initialize common functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuthStatus();
+            loadCategories();
+            updateCartCount();
+            
+            // Add event listeners
+            if (logoutLink) {
+                logoutLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    logout();
+                });
+            }
+            
+            // Search functionality
+            const searchInput = document.querySelector('.search-input');
+            const searchBtn = document.querySelector('.search-btn');
+            
+            if (searchBtn && searchInput) {
+                searchBtn.addEventListener('click', () => {
+                    const searchTerm = searchInput.value.trim();
+                    if (searchTerm) {
+                        window.location.href = `products.html?search=${encodeURIComponent(searchTerm)}`;
+                    }
+                });
+                
+                searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        const searchTerm = searchInput.value.trim();
+                        if (searchTerm) {
+                            window.location.href = `products.html?search=${encodeURIComponent(searchTerm)}`;
+                        }
+                    }
+                });
+            }
+            
+            // Newsletter form
+            const newsletterForm = document.querySelector('.newsletter-form');
+            if (newsletterForm) {
+                newsletterForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const email = newsletterForm.querySelector('input[type="email"]').value;
+                    showNotification(`تم اشتراكك بنجاح باستخدام البريد الإلكتروني: ${email}`);
+                    newsletterForm.reset();
+                });
+            }
+        });
+    </script>
     
     <!-- Page Specific JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // ... (keep your existing helper functions) ...
+            // Helper function to convert ArrayBuffer to Base64
+            function arrayBufferToBase64(buffer) {
+                let binary = '';
+                const bytes = new Uint8Array(buffer);
+                const len = bytes.byteLength;
+                for (let i = 0; i < len; i++) {
+                    binary += String.fromCharCode(bytes[i]);
+                }
+                return window.btoa(binary);
+            }
             
             // Load featured products (only first 3)
             async function loadFeaturedProducts() {
@@ -1481,7 +1739,7 @@
                 }
             }
             
-            // Create modern product card
+            // Create modern product card with discount support
             function createModernProductCard(product) {
                 const col = document.createElement('div');
                 col.className = 'col-md-6 col-lg-4 mb-4';
@@ -1516,18 +1774,18 @@
                 
                 const imageUrl = getProductImageUrl(primaryImage);
                 
-                // Calculate discount if there's an old price
-                const hasDiscount = product.oldPrice && product.oldPrice > product.price;
-                const discountPercent = hasDiscount 
-                    ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
-                    : 0;
+                // Calculate discount percentage if there's a discounted price
+                let discountPercentage = 0;
+                if (product.discountedPrice && product.discountedPrice < product.price) {
+                    discountPercentage = Math.round((1 - product.discountedPrice / product.price) * 100);
+                }
                 
                 col.innerHTML = `
                     <div class="product-card-modern h-100">
                         <div class="product-img-modern">
                             <img src="${imageUrl}" alt="${product.name}" 
                                  onerror="this.src='https://via.placeholder.com/300x300?text=Image+Not+Available'">
-                            ${hasDiscount ? `<div class="product-badge-modern">خصم ${discountPercent}%</div>` : ''}
+                            ${discountPercentage > 0 ? `<div class="discount-badge">خصم ${discountPercentage}%</div>` : ''}
                             <div class="product-actions-modern">
                                 <button class="btn btn-sm add-to-wishlist" data-product-id="${product.id}" title="إضافة إلى المفضلة">
                                     <i class="bi bi-heart"></i>
@@ -1550,9 +1808,12 @@
                                 <span>(${product.reviewCount})</span>
                             </div>
                             <div class="product-price-modern">
-                                <div>
-                                    <span class="price-main-modern">${formatPrice(product.price)}</span>
-                                    ${hasDiscount ? `<span class="price-old-modern">${formatPrice(product.oldPrice)}</span>` : ''}
+                                <div class="price-container">
+                                    ${discountPercentage > 0 ? 
+                                        `<span class="discounted-price">${formatPrice(product.discountedPrice)}</span>
+                                         <span class="price-old-modern">${formatPrice(product.price)}</span>` 
+                                        : `<span class="price-main-modern">${formatPrice(product.price)}</span>`
+                                    }
                                 </div>
                                 <button class="add-cart-btn-modern add-to-cart" data-product-id="${product.id}" ${product.stockQuantity === 0 ? 'disabled' : ''}>
                                     <i class="bi bi-cart-plus"></i> أضف
@@ -1583,7 +1844,6 @@
                 return col;
             }
             
-           
             // Render rating stars
             function renderRating(rating) {
                 let stars = '';
@@ -1604,37 +1864,36 @@
             }
             
             // Load categories for home page
-            // Load categories for home page
-async function loadHomeCategories() {
-    try {
-        const categories = await apiRequest('/categories');
-        
-        const categoriesContainer = document.getElementById('homeCategories');
-        categoriesContainer.innerHTML = '';
-        
-        // Take first 3 categories (changed from 6 to 3)
-        const homeCategories = categories.slice(0, 3);
-        
-        homeCategories.forEach((category, index) => {
-            const categoryCard = createCategoryCard(category);
-            categoryCard.setAttribute('data-aos', 'fade-up');
-            categoryCard.setAttribute('data-aos-delay', (index * 100).toString());
-            categoriesContainer.appendChild(categoryCard);
-        });
-        
-        // Refresh AOS
-        AOS.refresh();
-    } catch (error) {
-        console.error('Error loading categories:', error);
-        document.getElementById('homeCategories').innerHTML = `
-            <div class="col-12 text-center py-5">
-                <i class="bi bi-exclamation-triangle display-1 text-danger"></i>
-                <h4 class="mt-3">حدث خطأ</h4>
-                <p class="text-muted">لم نتمكن من تحميل الأقسام. يرجى المحاولة مرة أخرى لاحقاً.</p>
-            </div>
-        `;
-    }
-}
+            async function loadHomeCategories() {
+                try {
+                    const categories = await apiRequest('/categories');
+                    
+                    const categoriesContainer = document.getElementById('homeCategories');
+                    categoriesContainer.innerHTML = '';
+                    
+                    // Take first 3 categories
+                    const homeCategories = categories.slice(0, 3);
+                    
+                    homeCategories.forEach((category, index) => {
+                        const categoryCard = createCategoryCard(category);
+                        categoryCard.setAttribute('data-aos', 'fade-up');
+                        categoryCard.setAttribute('data-aos-delay', (index * 100).toString());
+                        categoriesContainer.appendChild(categoryCard);
+                    });
+                    
+                    // Refresh AOS
+                    AOS.refresh();
+                } catch (error) {
+                    console.error('Error loading categories:', error);
+                    document.getElementById('homeCategories').innerHTML = `
+                        <div class="col-12 text-center py-5">
+                            <i class="bi bi-exclamation-triangle display-1 text-danger"></i>
+                            <h4 class="mt-3">حدث خطأ</h4>
+                            <p class="text-muted">لم نتمكن من تحميل الأقسام. يرجى المحاولة مرة أخرى لاحقاً.</p>
+                        </div>
+                    `;
+                }
+            }
             
             // Create category card for home page with improved image handling
             function createCategoryCard(category) {
