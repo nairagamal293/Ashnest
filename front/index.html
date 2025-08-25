@@ -108,7 +108,7 @@
         }
         
         /* Navbar Styles */
-        .navbar {
+           .navbar {
             background-color: white;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
             padding: 15px 0;
@@ -116,18 +116,18 @@
         }
         
         .navbar-brand {
-            font-weight: 800;
-            color: var(--primary-color) !important;
             display: flex;
             align-items: center;
-            font-size: 1.5rem;
-            font-family: var(--font-heading);
+            padding: 0;
         }
         
-        .navbar-brand i {
-            font-size: 1.8rem;
-            margin-left: 10px;
-            color: var(--secondary-color);
+        .navbar-brand img {
+            height: 60px;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-brand:hover img {
+            transform: scale(1.05);
         }
         
         .navbar-nav .nav-link {
@@ -320,165 +320,294 @@
         }
         
         /* Redesigned Product Cards */
-        .product-card-modern {
-            transition: all 0.3s ease;
-            height: 100%;
-            border: none;
-            border-radius: 12px;
-            overflow: hidden;
-            background-color: white;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            position: relative;
-        }
-        
-        .product-card-modern:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-        }
-        
-        .product-img-modern {
-            position: relative;
-            overflow: hidden;
-            height: 200px;
-            background-color: #f8fafc;
-        }
-        
-        .product-img-modern img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-        
-        .product-card-modern:hover .product-img-modern img {
-            transform: scale(1.08);
-        }
-        
-        .product-badge-modern {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: var(--primary-color);
-            color: white;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            z-index: 2;
-        }
-        
-        .discount-badge {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: var(--danger-color);
-            color: white;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            z-index: 2;
-        }
-        
-        .product-actions-modern {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            display: flex;
-            flex-direction: column;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: 2;
-        }
-        
-        .product-card-modern:hover .product-actions-modern {
-            opacity: 1;
-        }
-        
-        .product-actions-modern .btn {
-            margin-bottom: 8px;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: white;
-            color: var(--dark-color);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-            border: none;
-            transition: all 0.2s ease;
-        }
-        
-        .product-actions-modern .btn:hover {
-            background-color: var(--primary-color);
-            color: white;
-            transform: scale(1.1);
-        }
-        
-        .product-content-modern {
-            padding: 16px;
-        }
-        
-        .product-title-modern {
-            font-size: 1rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-            height: 48px;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            line-height: 1.4;
-        }
-        
-        .product-category-modern {
-            font-size: 0.8rem;
-            color: var(--gray-color);
-            margin-bottom: 10px;
-        }
-        
-        .product-rating-modern {
-            display: flex;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-        
-        .product-rating-modern .bi {
-            color: #f6ad55;
-            font-size: 0.8rem;
-            margin-left: 2px;
-        }
-        
-        .product-rating-modern span {
-            font-size: 0.8rem;
-            color: var(--gray-color);
-            margin-right: 8px;
-        }
-        
-        .product-price-modern {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 15px;
-        }
-        
-        .price-container {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .price-main-modern {
-            font-size: 1.2rem;
-            font-weight: 800;
-            color: var(--primary-color);
-        }
-        
-        .price-old-modern {
-            font-size: 0.9rem;
-            text-decoration: line-through;
-            color: var(--gray-color);
-        }
+        /* Enhanced Product Cards for Featured Section */
+.product-card-modern {
+    transition: all 0.3s ease;
+    height: 100%;
+    border: none;
+    border-radius: 16px;
+    overflow: hidden;
+    background-color: white;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card-modern:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.product-img-modern {
+    position: relative;
+    overflow: hidden;
+    height: 220px;
+    background-color: #f8fafc;
+    border-radius: 16px 16px 0 0;
+}
+
+.product-img-modern img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s ease;
+}
+
+.product-card-modern:hover .product-img-modern img {
+    transform: scale(1.1);
+}
+
+.product-badge-modern {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 30px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    z-index: 2;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.discount-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: linear-gradient(135deg, var(--danger-color) 0%, #c53030 100%);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 30px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    z-index: 2;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.product-actions-modern {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 2;
+}
+
+.product-card-modern:hover .product-actions-modern {
+    opacity: 1;
+}
+
+.product-actions-modern .btn {
+    margin-bottom: 10px;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    color: var(--dark-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.product-actions-modern .btn:hover {
+    background-color: var(--primary-color);
+    color: white;
+    transform: scale(1.1);
+}
+
+.product-content-modern {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-title-modern {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    height: 52px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-height: 1.4;
+    color: var(--dark-color);
+}
+
+.product-category-modern {
+    font-size: 0.85rem;
+    color: var(--gray-color);
+    margin-bottom: 12px;
+    font-weight: 500;
+}
+
+.product-rating-modern {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.product-rating-modern .bi {
+    color: #f6ad55;
+    font-size: 0.9rem;
+    margin-left: 2px;
+}
+
+.product-rating-modern span {
+    font-size: 0.85rem;
+    color: var(--gray-color);
+    margin-right: 8px;
+}
+
+.product-price-modern {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+}
+
+.price-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.price-main-modern {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--primary-color);
+}
+
+.price-old-modern {
+    font-size: 1rem;
+    text-decoration: line-through;
+    color: var(--gray-color);
+}
+
+.discounted-price {
+    color: var(--danger-color);
+    font-weight: 800;
+    font-size: 1.3rem;
+}
+
+.add-cart-btn-modern {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(26, 54, 93, 0.2);
+}
+
+.add-cart-btn-modern:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(26, 54, 93, 0.3);
+}
+
+.add-cart-btn-modern i {
+    margin-left: 5px;
+}
+
+.out-of-stock-modern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+    border-radius: 16px;
+}
+
+.out-of-stock-text {
+    background-color: var(--danger-color);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 1rem;
+    box-shadow: 0 4px 10px rgba(229, 62, 62, 0.3);
+}
+
+/* Responsive adjustments for new cards */
+@media (max-width: 992px) {
+    .product-img-modern {
+        height: 200px;
+    }
+    
+    .product-title-modern {
+        font-size: 1rem;
+        height: 48px;
+    }
+    
+    .price-main-modern, .discounted-price {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .product-img-modern {
+        height: 180px;
+    }
+    
+    .product-title-modern {
+        font-size: 0.95rem;
+        height: 44px;
+    }
+    
+    .price-main-modern, .discounted-price {
+        font-size: 1.1rem;
+    }
+    
+    .add-cart-btn-modern {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .product-img-modern {
+        height: 160px;
+    }
+    
+    .product-actions-modern {
+        opacity: 1;
+    }
+    
+    .product-actions-modern .btn {
+        width: 36px;
+        height: 36px;
+        font-size: 0.85rem;
+    }
+    
+    .product-title-modern {
+        font-size: 0.9rem;
+        height: 40px;
+    }
+    
+    .price-main-modern, .discounted-price {
+        font-size: 1rem;
+    }
+    
+    .price-old-modern {
+        font-size: 0.85rem;
+    }
+}
         
         .discounted-price {
             color: var(--danger-color);
@@ -1138,11 +1267,10 @@
 <body>
     
 <!-- Modern Professional Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
             <a class="navbar-brand" href="index.html">
-                <i class="bi bi-house-gear-fill"></i>
-                <span>Ashnest</span>
+                <img src="images/logo1.png" alt="Ashnest Logo">
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
@@ -1168,8 +1296,8 @@
                             <li><a class="dropdown-item" href="categories.html"><i class="bi bi-grid me-2"></i>جميع الأقسام</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="about.html">من نحن</a>
+                    <li class="nav-item ">
+                        <a class="nav-link " href="about.html">من نحن</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="contact.html">اتصل بنا</a>
@@ -1216,6 +1344,7 @@
             </div>
         </div>
     </nav>
+    
     
     <!-- Hero Carousel -->
     <section class="hero-section">
@@ -1265,24 +1394,25 @@
     </section>
     
     <!-- Featured Products -->
-    <section class="py-5 featured-products">
-        <div class="container">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="section-title" data-aos="fade-right">منتجات مميزة</h2>
-                <a href="products.html" class="btn btn-outline-primary" data-aos="fade-left">عرض الكل <i class="bi bi-arrow-left"></i></a>
-            </div>
-            <div class="row" id="featuredProducts">
-                <div class="col-12 text-center py-5">
-                    <div class="spinner-container">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">جاري التحميل...</span>
-                        </div>
-                        <p class="mt-3">جاري تحميل المنتجات</p>
+    <!-- Featured Products -->
+<section class="py-5 featured-products">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="section-title" data-aos="fade-right">منتجات مميزة</h2>
+            <a href="products.html" class="btn btn-outline-primary" data-aos="fade-left">عرض الكل <i class="bi bi-arrow-left"></i></a>
+        </div>
+        <div class="row" id="featuredProducts">
+            <div class="col-12 text-center py-5">
+                <div class="spinner-container">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">جاري التحميل...</span>
                     </div>
+                    <p class="mt-3">جاري تحميل المنتجات</p>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
     
       <!-- Promo Banner -->
     <section>
@@ -1378,7 +1508,7 @@
                 <div class="col-lg-4 mb-5 mb-lg-0">
                     <div class="footer-logo">
                         <i class="bi bi-house-gear-fill"></i>
-                        <span>متجر أدوات منزلية</span>
+                        <span>Ashnest</span>
                     </div>
                     <p class="footer-about">متجرنا يوفر أفضل الأدوات المنزلية بجودة عالية وأسعار تنافسية. نقدم خدمة التوصيل لجميع أنحاء المملكة مع ضمان على جميع المنتجات.</p>
                     <div class="footer-social">
@@ -1412,19 +1542,20 @@
                     <h5 class="footer-title">النشرة البريدية</h5>
                     <p class="footer-newsletter">اشترك في نشرتنا البريدية لتصلك آخر العروض والتخفيضات أولاً بأول</p>
                     <form class="newsletter-form">
-                        <input type="email" class="form-control newsletter-input" placeholder="بريدك الإلكتروني" required>
                         <button type="submit" class="newsletter-btn">اشترك</button>
+                        <input type="email" class="form-control newsletter-input" placeholder="بريدك الإلكتروني" required>
+                        
                     </form>
                     <div class="payment-methods">
                         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/1200px-Visa_Inc._logo.svg.png" alt="Visa">
                         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png" alt="Mastercard">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Mada_Logo.svg/1200px-Mada_Logo.svg.png" alt="Mada">
+                       
                         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/PayPal.svg/1200px-PayPal.svg.png" alt="Paypal">
                     </div>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p class="copyright">© 2023 متجر أدوات منزلية. جميع الحقوق محفوظة.</p>
+                <p class="copyright">© 2025 متجر أدوات منزلية. جميع الحقوق محفوظة.</p>
             </div>
         </div>
     </footer>
@@ -1681,7 +1812,7 @@
             }
         });
     </script>
-    
+    <script type="text/javascript">window.$crisp=[];window.CRISP_WEBSITE_ID="f62f7b8f-1546-471f-863c-b94d56cac2b4";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();</script>
     <!-- Page Specific JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -1697,152 +1828,153 @@
             }
             
             // Load featured products (only first 3)
-            async function loadFeaturedProducts() {
-                try {
-                    const products = await apiRequest('/products?status=Active');
-                    
-                    // Take only first 3 products
-                    const featuredProducts = products.slice(0, 3);
-                    
-                    const productsContainer = document.getElementById('featuredProducts');
-                    productsContainer.innerHTML = '';
-                    
-                    if (featuredProducts.length === 0) {
-                        productsContainer.innerHTML = `
-                            <div class="col-12 text-center py-5">
-                                <i class="bi bi-inbox display-1 text-muted"></i>
-                                <h4 class="mt-3">لا توجد منتجات</h4>
-                                <p class="text-muted">لا توجد منتجات مميزة في الوقت الحالي.</p>
-                            </div>
-                        `;
-                        return;
-                    }
-                    
-                    featuredProducts.forEach((product, index) => {
-                        const productCard = createModernProductCard(product);
-                        productCard.setAttribute('data-aos', 'fade-up');
-                        productCard.setAttribute('data-aos-delay', (index * 100).toString());
-                        productsContainer.appendChild(productCard);
-                    });
-                    
-                    // Refresh AOS
-                    AOS.refresh();
-                } catch (error) {
-                    console.error('Error loading featured products:', error);
-                    document.getElementById('featuredProducts').innerHTML = `
-                        <div class="col-12 text-center py-5">
-                            <i class="bi bi-exclamation-triangle display-1 text-danger"></i>
-                            <h4 class="mt-3">حدث خطأ</h4>
-                            <p class="text-muted">لم نتمكن من تحميل المنتجات. يرجى المحاولة مرة أخرى لاحقاً.</p>
-                        </div>
-                    `;
-                }
+            // Load featured products (now 4 products)
+async function loadFeaturedProducts() {
+    try {
+        const products = await apiRequest('/products?status=Active');
+        
+        // Take first 4 products instead of 3
+        const featuredProducts = products.slice(0, 4);
+        
+        const productsContainer = document.getElementById('featuredProducts');
+        productsContainer.innerHTML = '';
+        
+        if (featuredProducts.length === 0) {
+            productsContainer.innerHTML = `
+                <div class="col-12 text-center py-5">
+                    <i class="bi bi-inbox display-1 text-muted"></i>
+                    <h4 class="mt-3">لا توجد منتجات</h4>
+                    <p class="text-muted">لا توجد منتجات مميزة في الوقت الحالي.</p>
+                </div>
+            `;
+            return;
+        }
+        
+        featuredProducts.forEach((product, index) => {
+            const productCard = createModernProductCard(product);
+            productCard.setAttribute('data-aos', 'fade-up');
+            productCard.setAttribute('data-aos-delay', (index * 100).toString());
+            productsContainer.appendChild(productCard);
+        });
+        
+        // Refresh AOS
+        AOS.refresh();
+    } catch (error) {
+        console.error('Error loading featured products:', error);
+        document.getElementById('featuredProducts').innerHTML = `
+            <div class="col-12 text-center py-5">
+                <i class="bi bi-exclamation-triangle display-1 text-danger"></i>
+                <h4 class="mt-3">حدث خطأ</h4>
+                <p class="text-muted">لم نتمكن من تحميل المنتجات. يرجى المحاولة مرة أخرى لاحقاً.</p>
+            </div>
+        `;
+    }
+}
+
+// Enhanced modern product card with more professional design
+function createModernProductCard(product) {
+    const col = document.createElement('div');
+    col.className = 'col-md-6 col-lg-3 mb-4'; // Changed to col-lg-3 for 4 products per row
+    
+    function getProductImageUrl(image) {
+        if (!image) return 'https://via.placeholder.com/300x300?text=No+Image';
+        
+        // If image has a URL property
+        if (image.url) return image.url;
+        
+        // If imageData is a base64 string
+        if (typeof image.imageData === 'string') {
+            return `data:${image.mimeType || 'image/jpeg'};base64,${image.imageData}`;
+        }
+        
+        // If imageData is binary
+        if (image.imageData) {
+            try {
+                const base64 = arrayBufferToBase64(image.imageData);
+                return `data:${image.mimeType || 'image/jpeg'};base64,${base64}`;
+            } catch (e) {
+                console.error('Error converting image to base64:', e);
             }
-            
-            // Create modern product card with discount support
-            function createModernProductCard(product) {
-                const col = document.createElement('div');
-                col.className = 'col-md-6 col-lg-4 mb-4';
-                
-                function getProductImageUrl(image) {
-                    if (!image) return 'https://via.placeholder.com/300x300?text=No+Image';
-                    
-                    // If image has a URL property
-                    if (image.url) return image.url;
-                    
-                    // If imageData is a base64 string
-                    if (typeof image.imageData === 'string') {
-                        return `data:${image.mimeType || 'image/jpeg'};base64,${image.imageData}`;
-                    }
-                    
-                    // If imageData is binary
-                    if (image.imageData) {
-                        try {
-                            const base64 = arrayBufferToBase64(image.imageData);
-                            return `data:${image.mimeType || 'image/jpeg'};base64,${base64}`;
-                        } catch (e) {
-                            console.error('Error converting image to base64:', e);
-                        }
-                    }
-                    
-                    return 'https://via.placeholder.com/300x300?text=Invalid+Image';
-                }
-                
-                const primaryImage = product.images && product.images.length > 0 
-                    ? product.images.find(img => img.isPrimary) || product.images[0]
-                    : null;
-                
-                const imageUrl = getProductImageUrl(primaryImage);
-                
-                // Calculate discount percentage if there's a discounted price
-                let discountPercentage = 0;
-                if (product.discountedPrice && product.discountedPrice < product.price) {
-                    discountPercentage = Math.round((1 - product.discountedPrice / product.price) * 100);
-                }
-                
-                col.innerHTML = `
-                    <div class="product-card-modern h-100">
-                        <div class="product-img-modern">
-                            <img src="${imageUrl}" alt="${product.name}" 
-                                 onerror="this.src='https://via.placeholder.com/300x300?text=Image+Not+Available'">
-                            ${discountPercentage > 0 ? `<div class="discount-badge">خصم ${discountPercentage}%</div>` : ''}
-                            <div class="product-actions-modern">
-                                <button class="btn btn-sm add-to-wishlist" data-product-id="${product.id}" title="إضافة إلى المفضلة">
-                                    <i class="bi bi-heart"></i>
-                                </button>
-                                <button class="btn btn-sm quick-view" data-product-id="${product.id}" title="عرض سريع">
-                                    <i class="bi bi-eye"></i>
-                                </button>
-                            </div>
-                            ${product.stockQuantity === 0 ? `
-                                <div class="out-of-stock-modern">
-                                    <div class="out-of-stock-text">نفد المخزون</div>
-                                </div>
-                            ` : ''}
-                        </div>
-                        <div class="product-content-modern">
-                            <h5 class="product-title-modern">${product.name}</h5>
-                            <p class="product-category-modern">${product.categoryName}</p>
-                            <div class="product-rating-modern">
-                                ${renderRating(product.averageRating)}
-                                <span>(${product.reviewCount})</span>
-                            </div>
-                            <div class="product-price-modern">
-                                <div class="price-container">
-                                    ${discountPercentage > 0 ? 
-                                        `<span class="discounted-price">${formatPrice(product.discountedPrice)}</span>
-                                         <span class="price-old-modern">${formatPrice(product.price)}</span>` 
-                                        : `<span class="price-main-modern">${formatPrice(product.price)}</span>`
-                                    }
-                                </div>
-                                <button class="add-cart-btn-modern add-to-cart" data-product-id="${product.id}" ${product.stockQuantity === 0 ? 'disabled' : ''}>
-                                    <i class="bi bi-cart-plus"></i> أضف
-                                </button>
-                            </div>
-                        </div>
+        }
+        
+        return 'https://via.placeholder.com/300x300?text=Invalid+Image';
+    }
+    
+    const primaryImage = product.images && product.images.length > 0 
+        ? product.images.find(img => img.isPrimary) || product.images[0]
+        : null;
+    
+    const imageUrl = getProductImageUrl(primaryImage);
+    
+    // Calculate discount percentage if there's a discounted price
+    let discountPercentage = 0;
+    if (product.discountedPrice && product.discountedPrice < product.price) {
+        discountPercentage = Math.round((1 - product.discountedPrice / product.price) * 100);
+    }
+    
+    col.innerHTML = `
+        <div class="product-card-modern h-100">
+            <div class="product-img-modern">
+                <img src="${imageUrl}" alt="${product.name}" 
+                     onerror="this.src='https://via.placeholder.com/300x300?text=Image+Not+Available'">
+                ${discountPercentage > 0 ? `<div class="discount-badge">خصم ${discountPercentage}%</div>` : ''}
+                <div class="product-actions-modern">
+                    <button class="btn btn-sm add-to-wishlist" data-product-id="${product.id}" title="إضافة إلى المفضلة">
+                        <i class="bi bi-heart"></i>
+                    </button>
+                    <button class="btn btn-sm quick-view" data-product-id="${product.id}" title="عرض سريع">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+                ${product.stockQuantity === 0 ? `
+                    <div class="out-of-stock-modern">
+                        <div class="out-of-stock-text">نفد المخزون</div>
                     </div>
-                `;
-                
-                // Add event listeners
-                const addToCartBtn = col.querySelector('.add-to-cart');
-                if (addToCartBtn) {
-                    addToCartBtn.addEventListener('click', () => addToCart(product.id));
-                }
-                
-                const addToWishlistBtn = col.querySelector('.add-to-wishlist');
-                if (addToWishlistBtn) {
-                    addToWishlistBtn.addEventListener('click', () => addToWishlist(product.id));
-                }
-                
-                const quickViewBtn = col.querySelector('.quick-view');
-                if (quickViewBtn) {
-                    quickViewBtn.addEventListener('click', () => {
-                        window.location.href = `product-detail.html?id=${product.id}`;
-                    });
-                }
-                
-                return col;
-            }
+                ` : ''}
+            </div>
+            <div class="product-content-modern">
+                <h5 class="product-title-modern">${product.name}</h5>
+                <p class="product-category-modern">${product.categoryName}</p>
+                <div class="product-rating-modern">
+                    ${renderRating(product.averageRating)}
+                    <span>(${product.reviewCount})</span>
+                </div>
+                <div class="product-price-modern">
+                    <div class="price-container">
+                        ${discountPercentage > 0 ? 
+                            `<span class="discounted-price">${formatPrice(product.discountedPrice)}</span>
+                             <span class="price-old-modern">${formatPrice(product.price)}</span>` 
+                            : `<span class="price-main-modern">${formatPrice(product.price)}</span>`
+                        }
+                    </div>
+                    <button class="add-cart-btn-modern add-to-cart" data-product-id="${product.id}" ${product.stockQuantity === 0 ? 'disabled' : ''}>
+                        <i class="bi bi-cart-plus"></i> أضف
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Add event listeners
+    const addToCartBtn = col.querySelector('.add-to-cart');
+    if (addToCartBtn) {
+        addToCartBtn.addEventListener('click', () => addToCart(product.id));
+    }
+    
+    const addToWishlistBtn = col.querySelector('.add-to-wishlist');
+    if (addToWishlistBtn) {
+        addToWishlistBtn.addEventListener('click', () => addToWishlist(product.id));
+    }
+    
+    const quickViewBtn = col.querySelector('.quick-view');
+    if (quickViewBtn) {
+        quickViewBtn.addEventListener('click', () => {
+            window.location.href = `product-detail.html?id=${product.id}`;
+        });
+    }
+    
+    return col;
+}
             
             // Render rating stars
             function renderRating(rating) {

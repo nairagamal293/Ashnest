@@ -116,18 +116,18 @@
         }
         
         .navbar-brand {
-            font-weight: 800;
-            color: var(--primary-color) !important;
             display: flex;
             align-items: center;
-            font-size: 1.5rem;
-            font-family: var(--font-heading);
+            padding: 0;
         }
         
-        .navbar-brand i {
-            font-size: 1.8rem;
-            margin-left: 10px;
-            color: var(--secondary-color);
+        .navbar-brand img {
+            height: 60px;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-brand:hover img {
+            transform: scale(1.05);
         }
         
         .navbar-nav .nav-link {
@@ -234,7 +234,32 @@
             border-color: var(--primary-color);
         }
         
+        /* Coming Soon Banner */
+        .coming-soon-banner {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
         
+        .coming-soon-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
         
         /* About Sections */
         .about-section {
@@ -334,75 +359,6 @@
             line-height: 1.6;
         }
         
-        /* Team Section */
-        .team-section {
-            padding: 80px 0;
-            background-color: #f8fafc;
-        }
-        
-        .team-member {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        
-        .member-img {
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            overflow: hidden;
-            margin: 0 auto 20px;
-            border: 5px solid white;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-        }
-        
-        .member-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .team-member:hover .member-img {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-        }
-        
-        .member-name {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-            color: var(--primary-color);
-        }
-        
-        .member-position {
-            color: var(--secondary-color);
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-        
-        .member-social {
-            display: flex;
-            justify-content: center;
-        }
-        
-        .member-social a {
-            width: 36px;
-            height: 36px;
-            background-color: var(--primary-color);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 5px;
-            transition: all 0.3s ease;
-        }
-        
-        .member-social a:hover {
-            background-color: var(--secondary-color);
-            transform: translateY(-3px);
-        }
-        
         /* Timeline Section */
         .timeline-section {
             padding: 80px 0;
@@ -495,33 +451,175 @@
         }
         
         /* Stats Section */
-        .stats-section {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
-            color: white;
-            padding: 70px 0;
-        }
+        /* Stats Section */
+.stats-section {
+    background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+    color: white;
+    padding: 40px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.stats-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    z-index: 0;
+}
+
+.stat-box {
+    text-align: center;
+    padding: 30px 15px;
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-box:hover {
+    transform: translateY(-10px);
+}
+
+.stat-icon {
+    font-size: 3.5rem;
+    margin-bottom: 20px;
+    color: rgba(255, 255, 255, 0.9);
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.1);
+    width: 100px;
+    height: 100px;
+    line-height: 100px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.stat-box:hover .stat-icon {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+.stat-number {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+    font-family: var(--font-heading);
+    position: relative;
+    display: inline-block;
+}
+
+.stat-number::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 3px;
+    background-color: var(--secondary-color);
+    border-radius: 2px;
+}
+
+.stat-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    margin-top: 15px;
+}
         
-        .stat-box {
+        /* Launch Section */
+        .launch-section {
+            padding: 80px 0;
+            background-color: #f8fafc;
             text-align: center;
-            padding: 20px;
         }
         
-        .stat-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            color: rgba(255, 255, 255, 0.8);
+        .launch-content {
+            max-width: 800px;
+            margin: 0 auto;
         }
         
-        .stat-number {
-            font-size: 3rem;
+        .launch-title {
+            font-size: 2.5rem;
             font-weight: 800;
-            margin-bottom: 10px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
             font-family: var(--font-heading);
         }
         
-        .stat-title {
-            font-size: 1.2rem;
+        .launch-subtitle {
+            font-size: 1.3rem;
+            color: var(--gray-color);
+            margin-bottom: 40px;
+        }
+        
+        .countdown {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+        
+        .countdown-item {
+            text-align: center;
+            margin: 0 15px;
+        }
+        
+        .countdown-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            background-color: white;
+            width: 100px;
+            height: 100px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+        }
+        
+        .countdown-label {
+            font-size: 1rem;
+            color: var(--gray-color);
+        }
+        
+        .notify-form {
+            display: flex;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .notify-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px 0 0 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .notify-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(26, 54, 93, 0.1);
+        }
+        
+        .notify-btn {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 0 8px 8px 0;
+            padding: 0 25px;
             font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .notify-btn:hover {
+            background-color: #c05621;
         }
         
         /* Footer */
@@ -740,12 +838,8 @@
                 padding: 10px 0;
             }
             
-            .navbar-brand {
-                font-size: 1.2rem;
-            }
-            
-            .navbar-brand i {
-                font-size: 1.5rem;
+            .navbar-brand img {
+                height: 35px;
             }
             
             .search-box {
@@ -778,6 +872,45 @@
             
             .stat-number {
                 font-size: 2.5rem;
+            }
+            
+            .launch-section {
+                padding: 60px 0;
+            }
+            
+            .launch-title {
+                font-size: 2rem;
+            }
+            
+            .launch-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .countdown {
+                flex-wrap: wrap;
+            }
+            
+            .countdown-item {
+                margin: 0 10px 20px;
+            }
+            
+            .countdown-number {
+                width: 80px;
+                height: 80px;
+                font-size: 2.5rem;
+            }
+            
+            .notify-form {
+                flex-direction: column;
+            }
+            
+            .notify-input {
+                border-radius: 8px;
+                margin-bottom: 15px;
+            }
+            
+            .notify-btn {
+                border-radius: 8px;
             }
             
             .footer {
@@ -857,6 +990,20 @@
                 font-size: 2rem;
             }
             
+            .launch-title {
+                font-size: 1.8rem;
+            }
+            
+            .countdown-item {
+                margin: 0 5px 15px;
+            }
+            
+            .countdown-number {
+                width: 70px;
+                height: 70px;
+                font-size: 2rem;
+            }
+            
             .footer-bottom {
                 margin-top: 30px;
             }
@@ -865,12 +1012,18 @@
 </head>
 <body>
     
+<!-- Coming Soon Banner -->
+<div class="coming-soon-banner">
+    <div class="container">
+        <p><i class="bi bi-clock-history me-2"></i> متجرنا قيد التطوير وسنطلق قريباً!</p>
+    </div>
+</div>
+    
 <!-- Modern Professional Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
             <a class="navbar-brand" href="index.html">
-                <i class="bi bi-house-gear-fill"></i>
-                <span>Ashnest</span>
+                <img src="images/logo1.png" alt="Ashnest Logo">
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
@@ -945,18 +1098,17 @@
         </div>
     </nav>
     
-
     
     <!-- About Us Section -->
     <section class="about-section">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right">
-                    <h2 class="section-title">قصتنا</h2>
+                    <h2 class="section-title">رؤيتنا</h2>
                     <div class="about-content">
-                        <p>تأسس متجرنا في عام 2010 بهدف توفير حلول متكاملة للأدوات المنزلية عالية الجودة. بدأنا كمتجر صغير وسرعان ما نمونا ليصبح أحد أبرز المتاجر الإلكترونية في المملكة.</p>
-                        <p>نحن نؤمن بأن المنزل هو مكان الراحة والأمان، ونسعى جاهدين لتوفير كل ما يحتاجه المنزل العصري من أدوات وأجهزة تجعل الحياة اليومية أسهل وأكثر راحة.</p>
-                        <p>خلال رحلتنا، قمنا بتوسيع نطاق منتجاتنا ليشمل مختلف الأقسام المنزلية بدءاً من أدوات المطبخ ومروراً بأدوات التنظيف ووصولاً إلى أدوات الحدائق، مع الحفاظ على أعلى معايير الجودة في كل منتج نقدمه.</p>
+                        <p>نحن في طور بناء متجر إلكتروني متخصص في الأدوات المنزلية عالية الجودة. فكرتنا بدأت من رؤية واضحة لتوفير حلول متكاملة تجعل حياة المنزل أسهل وأكثر راحة.</p>
+                        <p>نسعى لإنشاء منصة تجمع بين الجودة والتنافسية في الأسعار، مع التركيز على تجربة المستخدم ورضا العملاء. نؤمن بأن المنزل هو مكان الراحة والأمان، ونسعى لتوفير كل ما يحتاجه المنزل العصري من أدوات وأجهزة.</p>
+                        <p>فريقنا يعمل بجد لاختيار أفضل المنتجات وتصميم تجربة تسوق مريحة وسهلة تناسب احتياجات العملاء في جميع أنحاء المملكة.</p>
                     </div>
                 </div>
                 <div class="col-lg-6" data-aos="fade-left">
@@ -971,7 +1123,7 @@
     <!-- Values Section -->
     <section class="values-section">
         <div class="container">
-            <h2 class="section-title text-center mb-5" data-aos="fade-up">قيمنا</h2>
+            <h2 class="section-title text-center mb-5" data-aos="fade-up">قيمنا الأساسية</h2>
             <div class="row g-4">
                 <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
                     <div class="value-card">
@@ -1017,41 +1169,41 @@
     <!-- Timeline Section -->
     <section class="timeline-section">
         <div class="container">
-            <h2 class="section-title text-center mb-5" data-aos="fade-up">رحلتنا</h2>
+            <h2 class="section-title text-center mb-5" data-aos="fade-up">رحلتنا حتى الآن</h2>
             <div class="timeline">
                 <div class="timeline-item" data-aos="fade-right">
                     <div class="timeline-content">
-                        <div class="timeline-date">2010</div>
-                        <h5 class="timeline-title">تأسيس المتجر</h5>
-                        <p class="timeline-text">بدأنا رحلتنا كمتجر صغير متخصص في أدوات المطبخ الأساسية.</p>
+                        <div class="timeline-date">الربع الأول 2025</div>
+                        <h5 class="timeline-title">توليد الفكرة</h5>
+                        <p class="timeline-text">بدأت فكرة إنشاء متجر متخصص في الأدوات المنزلية من خلال دراسة السوق وتحديد احتياجات العملاء.</p>
                     </div>
                 </div>
                 <div class="timeline-item" data-aos="fade-left">
                     <div class="timeline-content">
-                        <div class="timeline-date">2013</div>
-                        <h5 class="timeline-title">التوسع في المنتجات</h5>
-                        <p class="timeline-text">أضفنا أقساماً جديدة تشمل أدوات التنظيف والتنظيم المنزلي.</p>
+                        <div class="timeline-date">الربع الثاني 2025</div>
+                        <h5 class="timeline-title">التخطيط والتصميم</h5>
+                        <p class="timeline-text">قمنا بتخطيط متجرنا وتصميمه مع التركيز على تجربة المستخدم وسهولة الاستخدام.</p>
                     </div>
                 </div>
                 <div class="timeline-item" data-aos="fade-right">
                     <div class="timeline-content">
-                        <div class="timeline-date">2016</div>
-                        <h5 class="timeline-title">إطلاق الموقع الإلكتروني</h5>
-                        <p class="timeline-text">انتقلنا إلى العالم الرقمي وأطلقنا منصتنا الإلكترونية للوصول إلى عملاء أوسع.</p>
+                        <div class="timeline-date">الربع الثالث 2025</div>
+                        <h5 class="timeline-title">التطوير</h5>
+                        <p class="timeline-text">بدأنا مرحلة تطوير المنصة الإلكترونية وبناء نظام التشغيل للمتجر.</p>
                     </div>
                 </div>
                 <div class="timeline-item" data-aos="fade-left">
                     <div class="timeline-content">
-                        <div class="timeline-date">2019</div>
-                        <h5 class="timeline-title">التوسع في المملكة</h5>
-                        <p class="timeline-text">بدأنا خدمة التوصيل لجميع أنحاء المملكة مع افتتاح مستودعات جديدة.</p>
+                        <div class="timeline-date">الربع الرابع 2025</div>
+                        <h5 class="timeline-title">اختيار المنتجات</h5>
+                        <p class="timeline-text">قمنا باختيار وتقييم أفضل منتجات الأدوات المنزلية التي سنقدمها في متجرنا.</p>
                     </div>
                 </div>
                 <div class="timeline-item" data-aos="fade-right">
                     <div class="timeline-content">
-                        <div class="timeline-date">2023</div>
-                        <h5 class="timeline-title">الوصول إلى 100 ألف عميل</h5>
-                        <p class="timeline-text">تجاوزنا حاجز المئة ألف عميل راضٍ واستمرينا في النمو والتطور.</p>
+                        <div class="timeline-date">الربع الأول 2026</div>
+                        <h5 class="timeline-title">الاختبار النهائي</h5>
+                        <p class="timeline-text">نختبر المنصة والمنتجات لضمان جودة الخدمة قبل إطلاق المتجر رسمياً.</p>
                     </div>
                 </div>
             </div>
@@ -1065,39 +1217,74 @@
                 <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="100">
                     <div class="stat-box">
                         <div class="stat-icon">
-                            <i class="bi bi-cart-check"></i>
+                            <i class="bi bi-box-seam"></i>
                         </div>
-                        <div class="stat-number">100,000+</div>
-                        <div class="stat-title">عميل راضٍ</div>
+                        <div class="stat-number">500+</div>
+                        <div class="stat-title">منتج مخطط</div>
                     </div>
                 </div>
                 <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="200">
                     <div class="stat-box">
                         <div class="stat-icon">
-                            <i class="bi bi-box-seam"></i>
+                            <i class="bi bi-tag"></i>
                         </div>
-                        <div class="stat-number">5,000+</div>
-                        <div class="stat-title">منتج متنوع</div>
+                        <div class="stat-number">20+</div>
+                        <div class="stat-title">فئة منتجات</div>
                     </div>
                 </div>
                 <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="300">
                     <div class="stat-box">
                         <div class="stat-icon">
-                            <i class="bi bi-award"></i>
+                            <i class="bi bi-truck"></i>
                         </div>
-                        <div class="stat-number">15+</div>
-                        <div class="stat-title">جائزة تميز</div>
+                        <div class="stat-number">5+</div>
+                        <div class="stat-title">مراكز توزيع</div>
                     </div>
                 </div>
                 <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="400">
                     <div class="stat-box">
                         <div class="stat-icon">
-                            <i class="bi bi-truck"></i>
+                            <i class="bi bi-people"></i>
                         </div>
-                        <div class="stat-number">500,000+</div>
-                        <div class="stat-title">طلب مكتمل</div>
+                        <div class="stat-number">15+</div>
+                        <div class="stat-title">عضو في الفريق</div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Launch Section -->
+    <section class="launch-section">
+        <div class="container">
+            <div class="launch-content" data-aos="fade-up">
+                <h2 class="launch-title">قريب جداً</h2>
+                <p class="launch-subtitle">نعمل بجد لإطلاق متجرنا قريباً. سجل بريدك الإلكتروني ليصلك إشعار عند  خصم 15% على طلبك الأول!</p>
+                
+                <div class="countdown" id="countdown">
+                    <div class="countdown-item">
+                        <div class="countdown-number" id="days">30</div>
+                        <div class="countdown-label">يوم</div>
+                    </div>
+                    <div class="countdown-item">
+                        <div class="countdown-number" id="hours">12</div>
+                        <div class="countdown-label">ساعة</div>
+                    </div>
+                    <div class="countdown-item">
+                        <div class="countdown-number" id="minutes">45</div>
+                        <div class="countdown-label">دقيقة</div>
+                    </div>
+                    <div class="countdown-item">
+                        <div class="countdown-number" id="seconds">30</div>
+                        <div class="countdown-label">ثانية</div>
+                    </div>
+                </div>
+                
+                <form class="notify-form">
+                    <button type="submit" class="notify-btn">إشعارني</button>
+                    <input type="email" class="notify-input" placeholder="أدخل بريدك الإلكتروني" required>
+                    
+                </form>
             </div>
         </div>
     </section>
@@ -1109,9 +1296,9 @@
                 <div class="col-lg-4 mb-5 mb-lg-0">
                     <div class="footer-logo">
                         <i class="bi bi-house-gear-fill"></i>
-                        <span>متجر أدوات منزلية</span>
+                        <span>Ashnest</span>
                     </div>
-                    <p class="footer-about">متجرنا يوفر أفضل الأدوات المنزلية بجودة عالية وأسعار تنافسية. نقدم خدمة التوصيل لجميع أنحاء المملكة مع ضمان على جميع المنتجات.</p>
+                    <p class="footer-about">متجرنا قيد التطوير وسنطلق قريباً لتوفير أفضل الأدوات المنزلية بجودة عالية وأسعار تنافسية. نعدكم بتقديم خدمة التوصيل لجميع أنحاء المملكة مع ضمان على جميع المنتجات.</p>
                     <div class="footer-social">
                         <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
                         <a href="#" class="social-icon"><i class="bi bi-twitter"></i></a>
@@ -1123,39 +1310,40 @@
                     <h5 class="footer-title">روابط سريعة</h5>
                     <ul class="footer-links">
                         <li><a href="index.html"><i class="bi bi-chevron-left"></i> الرئيسية</a></li>
-                        <li><a href="products.html"><i class="bi bi-chevron-left"></i> منتجاتنا</a></li>
-                        <li><a href="offers.html"><i class="bi bi-chevron-left"></i> العروض</a></li>
                         <li><a href="about.html"><i class="bi bi-chevron-left"></i> من نحن</a></li>
                         <li><a href="contact.html"><i class="bi bi-chevron-left"></i> اتصل بنا</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
-                    <h5 class="footer-title">خدمة العملاء</h5>
-                    <ul class="footer-links">
-                        <li><a href="profile.html"><i class="bi bi-chevron-left"></i> حسابي</a></li>
-                        <li><a href="track-order.html"><i class="bi bi-chevron-left"></i> تتبع الطلب</a></li>
-                        <li><a href="return-policy.html"><i class="bi bi-chevron-left"></i> سياسة الإرجاع</a></li>
                         <li><a href="faq.html"><i class="bi bi-chevron-left"></i> الأسئلة الشائعة</a></li>
                         <li><a href="terms.html"><i class="bi bi-chevron-left"></i> الشروط والأحكام</a></li>
                     </ul>
                 </div>
+                <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                    <h5 class="footer-title">الأقسام</h5>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="bi bi-chevron-left"></i> أدوات المطبخ</a></li>
+                        <li><a href="#"><i class="bi bi-chevron-left"></i> أدوات التنظيف</a></li>
+                        <li><a href="#"><i class="bi bi-chevron-left"></i> تنظيم المنزل</a></li>
+                        <li><a href="#"><i class="bi bi-chevron-left"></i> أدوات الحدائق</a></li>
+                        <li><a href="#"><i class="bi bi-chevron-left"></i> أجهزة منزلية</a></li>
+                    </ul>
+                </div>
                 <div class="col-lg-4 col-md-4">
                     <h5 class="footer-title">النشرة البريدية</h5>
-                    <p class="footer-newsletter">اشترك في نشرتنا البريدية لتصلك آخر العروض والتخفيضات أولاً بأول</p>
+                    <p class="footer-newsletter">اشترك في نشرتنا البريدية لتصلك آخر العروض والتخفيضات أولاً بأول وإشعار عند إطلاق المتجر.</p>
                     <form class="newsletter-form">
-                        <input type="email" class="form-control newsletter-input" placeholder="بريدك الإلكتروني" required>
                         <button type="submit" class="newsletter-btn">اشترك</button>
+                        <input type="email" class="form-control newsletter-input" placeholder="بريدك الإلكتروني" required>
+                        
                     </form>
                     <div class="payment-methods">
                         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/1200px-Visa_Inc._logo.svg.png" alt="Visa">
                         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png" alt="Mastercard">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Mada_Logo.svg/1200px-Mada_Logo.svg.png" alt="Mada">
+                        
                         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/PayPal.svg/1200px-PayPal.svg.png" alt="Paypal">
                     </div>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p class="copyright">© 2023 متجر أدوات منزلية. جميع الحقوق محفوظة.</p>
+                <p class="copyright">© 2025 متجر أدوات منزلية. جميع الحقوق محفوظة. الموقع قيد التطوير.</p>
             </div>
         </div>
     </footer>
@@ -1182,6 +1370,41 @@
     
     <!-- Common JavaScript -->
     <script src="js/common.js"></script>
+    <script type="text/javascript">window.$crisp=[];window.CRISP_WEBSITE_ID="f62f7b8f-1546-471f-863c-b94d56cac2b4";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();</script>
+    
+    <!-- Countdown Timer -->
+    <script>
+        // Set the date we're counting down to
+        const launchDate = new Date();
+        launchDate.setDate(launchDate.getDate() + 30); // 30 days from now
+        
+        // Update the count down every 1 second
+        const countdownTimer = setInterval(function() {
+            // Get today's date and time
+            const now = new Date().getTime();
+            
+            // Find the distance between now and the launch date
+            const distance = launchDate.getTime() - now;
+            
+            // Time calculations for days, hours, minutes and seconds
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            // Display the result in the elements
+            document.getElementById("days").innerHTML = days;
+            document.getElementById("hours").innerHTML = hours;
+            document.getElementById("minutes").innerHTML = minutes;
+            document.getElementById("seconds").innerHTML = seconds;
+            
+            // If the count down is finished, display a message
+            if (distance < 0) {
+                clearInterval(countdownTimer);
+                document.getElementById("countdown").innerHTML = "<div class='launch-message'>لقد أطلقنا المتجر!</div>";
+            }
+        }, 1000);
+    </script>
     
     <!-- Page Specific JavaScript -->
     <script>

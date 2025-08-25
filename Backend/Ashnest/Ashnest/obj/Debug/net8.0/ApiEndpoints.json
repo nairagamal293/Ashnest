@@ -669,6 +669,22 @@
   },
   {
     "ContainingType": "Ashnest.Controllers.OrdersController",
+    "Method": "GetOrderForAdmin",
+    "RelativePath": "api/Orders/admin/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Ashnest.Controllers.OrdersController",
     "Method": "GetAllOrders",
     "RelativePath": "api/Orders/all",
     "HttpMethod": "GET",
@@ -978,6 +994,22 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Ashnest.Controllers.UsersController",
+    "Method": "GetUser",
+    "RelativePath": "api/Users/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
     "ReturnTypes": []
   },
   {

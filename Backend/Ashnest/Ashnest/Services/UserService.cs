@@ -14,11 +14,17 @@ namespace Ashnest.Services
             _context = context;
         }
 
+        
+
         public async Task<User> GetUserByIdAsync(int id)
         {
-            return await _context.Users.FindAsync(id);
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                throw new Exception("User not found");
+            }
+            return user;
         }
-
         public async Task UpdateProfileAsync(int userId, UpdateProfileRequest request)
         {
             var user = await _context.Users.FindAsync(userId);

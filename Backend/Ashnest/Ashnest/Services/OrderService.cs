@@ -220,12 +220,10 @@ namespace Ashnest.Services
                     .ThenInclude(oi => oi.Product)
                     .ThenInclude(p => p.ProductImages)
                     .FirstOrDefaultAsync(o => o.Id == orderId && (o.UserId == userId || userId == 0)); // userId=0 for admin
-
                 if (order == null)
                 {
                     throw new Exception("Order not found");
                 }
-
                 return MapToDto(order);
             }
             catch (Exception ex)

@@ -108,7 +108,7 @@
         }
         
         /* Navbar Styles */
-        .navbar {
+          .navbar {
             background-color: white;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
             padding: 15px 0;
@@ -116,18 +116,18 @@
         }
         
         .navbar-brand {
-            font-weight: 800;
-            color: var(--primary-color) !important;
             display: flex;
             align-items: center;
-            font-size: 1.5rem;
-            font-family: var(--font-heading);
+            padding: 0;
         }
         
-        .navbar-brand i {
-            font-size: 1.8rem;
-            margin-left: 10px;
-            color: var(--secondary-color);
+        .navbar-brand img {
+            height: 60px;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-brand:hover img {
+            transform: scale(1.05);
         }
         
         .navbar-nav .nav-link {
@@ -728,8 +728,7 @@
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
             <a class="navbar-brand" href="index.html">
-                <i class="bi bi-house-gear-fill"></i>
-                <span>Ashnest</span>
+                <img src="images/logo1.png" alt="Ashnest Logo">
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
@@ -755,8 +754,8 @@
                             <li><a class="dropdown-item" href="categories.html"><i class="bi bi-grid me-2"></i>جميع الأقسام</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="about.html">من نحن</a>
+                    <li class="nav-item ">
+                        <a class="nav-link " href="about.html">من نحن</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="contact.html">اتصل بنا</a>
@@ -804,6 +803,7 @@
         </div>
     </nav>
     
+    
     <!-- Order Confirmation Section -->
     <section class="py-5 order-confirmation-section" data-aos="fade-up">
         <div class="container">
@@ -846,7 +846,7 @@
                 <div class="col-lg-4 mb-5 mb-lg-0">
                     <div class="footer-logo">
                         <i class="bi bi-house-gear-fill"></i>
-                        <span>متجر أدوات منزلية</span>
+                        <span>Ashnest</span>
                     </div>
                     <p class="footer-about">متجرنا يوفر أفضل الأدوات المنزلية بجودة عالية وأسعار تنافسية. نقدم خدمة التوصيل لجميع أنحاء المملكة مع ضمان على جميع المنتجات.</p>
                     <div class="footer-social">
@@ -880,19 +880,20 @@
                     <h5 class="footer-title">النشرة البريدية</h5>
                     <p class="footer-newsletter">اشترك في نشرتنا البريدية لتصلك آخر العروض والتخفيضات أولاً بأول</p>
                     <form class="newsletter-form">
-                        <input type="email" class="form-control newsletter-input" placeholder="بريدك الإلكتروني" required>
                         <button type="submit" class="newsletter-btn">اشترك</button>
+                        <input type="email" class="form-control newsletter-input" placeholder="بريدك الإلكتروني" required>
+                        
                     </form>
                     <div class="payment-methods">
                         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/1200px-Visa_Inc._logo.svg.png" alt="Visa">
                         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png" alt="Mastercard">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Mada_Logo.svg/1200px-Mada_Logo.svg.png" alt="Mada">
+                       
                         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/PayPal.svg/1200px-PayPal.svg.png" alt="Paypal">
                     </div>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p class="copyright">© 2023 متجر أدوات منزلية. جميع الحقوق محفوظة.</p>
+                <p class="copyright">© 2025 متجر أدوات منزلية. جميع الحقوق محفوظة.</p>
             </div>
         </div>
     </footer>
@@ -1149,7 +1150,8 @@
             }
         });
     </script>
-    
+        <script type="text/javascript">window.$crisp=[];window.CRISP_WEBSITE_ID="f62f7b8f-1546-471f-863c-b94d56cac2b4";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();</script>
+
     <!-- Page Specific JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {

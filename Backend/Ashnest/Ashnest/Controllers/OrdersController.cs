@@ -41,6 +41,22 @@ namespace Ashnest.Controllers
             }
         }
 
+        [HttpGet("admin/{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetOrderForAdmin(int id)
+        {
+            try
+            {
+                // Pass 0 as userId to indicate this is an admin request
+                var order = await _orderService.GetOrderByIdAsync(0, id);
+                return Ok(order);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateOrder([FromBody] CreateOrderRequest request)
         {

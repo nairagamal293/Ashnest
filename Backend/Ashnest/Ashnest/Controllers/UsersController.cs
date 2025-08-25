@@ -36,6 +36,34 @@ namespace Ashnest.Controllers
                 user.Role
             });
         }
+        [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetUser(int id)
+        {
+            try
+            {
+                var user = await _userService.GetUserByIdAsync(id);
+                if (user == null)
+                {
+                    return NotFound(new { message = "User not found" });
+                }
+
+                return Ok(new
+                {
+                    user.Id,
+                    user.FirstName,
+                    user.LastName,
+                    user.Email,
+                    user.Phone,
+                    user.Role,
+                    user.CreatedAt
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
 
         [HttpPut("profile")]
         public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileRequest request)
